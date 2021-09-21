@@ -1,0 +1,100 @@
+say		said	said	|говорить
+make	made	made	|делать
+go		went	gone	|идти
+take	took	taken	|брать
+come	came	come	|приходить
+see		saw		seen	|видеть
+know	knew	known	|знать
+get		got		got		|получать
+give	gave	given	|давать
+find	found	found	|находить
+think	thought	thought	|думать
+tell	told	told	|сказать
+become	became	become	|становиться
+show	showed	shown	|показывать
+leave	left	left	|оставлять
+feel	felt	felt	|чувствовать
+put		put		put		|класть
+bring	brought	brought	|приносить
+begin	began	began	|начинать
+keep	kept	kept	|держать
+hold	held	held	|держать
+write	wrote	written	|писать
+stand	stood	stood	|стоять
+hear	heard	heard	|слышать
+let		let		let		|позволять,разрешать,давать взможнсоть
+mean	meant	meant	|иметь в виду, намереваться
+set		set		set		|ставить, устанавливать
+meet	met		met		|встречать
+run		ran		run		|бежать
+pay		paid	paid	|платить
+sit		sat		sat		|сидеть
+speak	spoke	spoken	|говорить
+lie		lay		lain	|лежать
+lead	led		led		|вести
+read	read	read	|читать
+grow	grew	grown	|расти
+loose	lost	lost	|терять
+fall	fell	fallen	|падать
+send	sent	sent	|отправлять
+build	built	built	|строить
+understand	understood	understood	|понимать
+draw	drew	drawn	|рисовать
+break	broke	broken	|ломать
+spend	spent	spent	|тратить
+cut		cut		cut		|резать
+rise	rose	risen	|подниматься
+drive	drove	driven	|вести машину
+buy		bought	bought	|покупать
+wear	wore	worn	|носить (одежду)
+choose	chose	chosen	|выбирать
+seek	sought	sought	|искать
+throw	threw	thrown	|бросать
+catch	caught	caught	|ловить
+deal	dealt	dealt	|иметь дело
+win		won		won		|выигрывать
+forget	forgot	forgotten	|забывать
+lay		laid	laid	|класть
+sell	sold	sold	|продавать
+fight	fought	fought	|драться, бороться
+bear	bore	born	|родиться
+teach	taught	taught	|учить
+eat		ate		eaten	|есть
+sing	sang	sung	|петь
+strike	struck	struck	|ударять, бить
+hang	hung	hung	|вешать
+shake	shook	shaken	|трясти
+ride	rode	ridden	|ездить верхом
+feed	fed		fed		|кормить
+shoot	shot	shot	|стрелять
+drink	drank	drunk	|пить
+hit		hit		hit		|ударять
+arise	arose	arisen	|возникать
+fly		flew	flown	|летать
+spread	spread	spread	|распространяться
+sleep	slept	slept	|спать
+cost	cost	cost	|стоить
+beat	beat	beaten	|бить
+light	lit		lit		|освещать, зажигать
+bind	bound	bound	|вязать, связывать
+cast	cast	cast	|брать, кидать
+hide	hid		hidden	|прятаться
+swing	swung	swung	|качаться, вертеться
+blow	blew	blown	|дуть
+swim	swam	swum	|плавать
+bend	bent	bent	|сгибать
+wake	woke	woken	|просыпаться, будить
+stick	stuck	stuck	|приклеивать, держаться
+sweep	swept	swept	|подметать, мчаться
+undertake	undertook	undertaken	|предпринимать, совершать
+shut	shut	shut	|закрывать
+steal	stole	stolen	|красть
+tear	tore	torn	|рвать
+hurt	hurt	hurt	|повредить, ушибить
+ring	rang	rung	|звонить
+lend	lent	lent	|одалживать
+sink	sank	sunk	|тонуть, погружаться
+overcome	overcame	overcome	|преодолеть, побороть
+freeze	froze	frozen	|замерзать
+shine	shone	shone	|светить, сиять
+withdraw	withdrew	withdrawn	|взять назад

@@ -1,0 +1,38 @@
+above 		|выше [əˈbʌv]
+below 		|ниже [bɪˈləʊ]
+over		|поверх [ˈəʊvər]
+under		|под (чем-то) [ˈʌndər]
+before		|перед, у [bɪˈfɔːr]
+behind		|за, позади [bɪˈhaɪnd]
+between		|между [bɪˈtwiːn]
+among		|среди  [əˈmʌŋ]
+near, by, beside |около, возле, у [nɪər], [bɪˈsaɪd]
+outside		|снаружи, за [ˌaʊtˈsaɪd]
+in front of	|перед [frʌnt]
+opposite	|напротив [ˈɒpəzɪt]
+next to		|следущий 
+from/to
+into
+out of
+through
+up/down
+
+at — в;
+in — в;
+on — на;
+on the right/on the left
+in the middle
+in the background
+
+on the corner
+at the traffic light
+opposit
+turn left/right
+go straight on
+go past the church
+at the end of the street
+
+
+height		|высота
+width		|ширина
+weight		|масса

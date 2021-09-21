@@ -1,0 +1,3 @@
+String str1 = urlConnectWorker.sendGetHTTPS("https://mail.npovs.icl.kazan.ru/owa", "");
+Для этого адреса через keytool нужно добавить сертификат. Предварительно открыть в браузере и искачать его.
+keytool -import -alias _alias_name_ -keystore ..\lib\security\cacerts -file  _path_to_cer_file

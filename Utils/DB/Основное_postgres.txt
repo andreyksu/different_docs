@@ -1,0 +1,113 @@
+1.		createuser -E -s -l -d -r -P -e <name_user>								#создание пользователя (утилита createuser)
+1.1.  	CREATE ROLE <name> WITH CREATEDB CREATEROLE LOGIN PASSWORD '<pass>'	    #создание пользователя без прав создания. При этом create role это расширенная команда по отношению к create user
+2.      createdb <name_db> -E 'UTF-8' -O <owner_db> -U <name_user> -h <ip>;		#Создание БД (утилита createdb)
+2.1.	CREATE DATABASE <name> owner test;										#Создание БД когда уже залогинился в СУБД
+3.		dropdb <name_db> -U <name_user>	-h <ip>									#Удаление дб (утилита dropdb)
+3.1.    DROP DATABASE IF EXISTS <name_db>                                       #Удаление БД когда уже залогинились в СУБД
+
+4.		pg_dump -Fc -x -U <name_user> <name_db> -f <name_file>					#Создание бинарного дампа БД. x - означает не выгружать права.
+4.1.	pg_dump -U <name_user> <name_db> > <name_file>							#И еще один метод, создает текстовый дамп
+			pg_dump <name_db> -U <name_user> -w > <name_file>
+
+5.		psql -U <name_user> -d <name_db> -f <file_dump>					        #Заливка дампа .sql .dmp в созданную бд
+5.1.	pg_restore -Fc -d <name_db> <file_dump>									#Заливка бинарного дампа .sql .dmp в созданную бд
+
+6.		psql -U <name_user> -d <name_db> -h <ip>								#Авторизация к опеределнной бд.
+6.1.	\l - список таблиц, \connect <name_db> <name_user> подключение к бд, \d <name_db> - структура бд, \dt - список таблиц
+
+7.		CREATE TABLE <name_table> (<name_field> <type> <restriction>, ....); 	#Restriction → UNIQUE, NOT NULL,  CONSTRAINT books_id_pkey PRIMARY KEY (id));
+7.1.	СREATE TABLE <name_table_new> (<name_field>, ...) AS SELECT <name_field>, ... FROM <name_table_old> #Удаление поля путем создания новой таблицы → переименование таблицы
+
+8.		ALTER TABLE <name_table> ADD COLUMN <name_field> <type>					#Value → vextval();
+8.1.	ALTER TABLE <name_table> RENAME TO <new_name_table>;
+8.2.	ALTER TABLE <name_table> RENAME <column> TO <new_column>;
+8.3.	ALTER TABLE <name_table> ADD CONSTRAINT <const>;
+8.4.	ALTER TABLE <name_table> OWNER TO <new_owner>;
+
+9.		INSERT INTO <name_table> SELECT <name_field>, ... FROM <name_table_1>	#Заполняем таблицу путем селекта из др. таблицы.
+9.1.	стр. 97
+
+10. 	SELECT <fields> INTO <new_table> from <old_table>;
+
+11.		DELETE FROM <name_table> WHERE <condition>;
+
+12.		UPDATE <name_table> SET <field=new_value, field1=....> WHERE <condition>;
+		UPDATE stock SET retail=stock_bacup.retail FROM stock_backap WHERE stock.isbn=stock_backup.isbn;
+		
+13.		CREATE VIEW <name_view> AS <condition>;
+14.     drop table <name_table>;                                                #Удаление таблицы, после логина в бд.
+
+
+7. Экранирование с помощью слэша. \\ → \ Есть еще экранирование знаком $
+8. Объединение двух строк в одну выполняется оператором конкатенации ||. 'brook' || 'end' → 'brookend';
+9. Целочисленные константы не заключаются в апострафы.
+10. При поиске на Null используется запись where <field> IS NULL;
+11. Для integer применяется генерация уникальности nextval();
+
+
+
+#export PASS=pass                                                               #Пример для скрипта - вставка пароля.
+#dropdb....
+#createdb...
+#unset PASS
+
+
+like('%...%')
+~ '*...*' для поиска более широко поддерживает regexp
+########################################################################################################################################################################
+Настройка БД после установки итд
+########################################################################################################################################################################
+
+Cоздание/заливка дампов
+Примечание: владельцем базы должен быть тот пользователь, от лица которого мы к ней обращаемся
+
+    Создаем базу данных и пользователя 
+    # createuser -PE zzz
+    # createdb -O zzz -E 'UTF-8' zdb
+    Создание дампов
+    # pg_dump -Fc -x -U postgres -W -f <файл_дампа>
+    Загрузка дампов на чистую базу
+        если БД уже имеется, надо удалить её от имени владельца:
+        # su <владелец>
+        # psql -d template1
+        # drop database <имя_базы>;
+        # \q
+        Cобственно заливка базы (в нашем случае <пользователь> = zzz) с предварительным созданием удаленной базы
+        # su <пользователь>
+        # psql -d template1
+        # create database <имя_базы>;
+        # \q
+        # pg_restore -Fc -d <имя_базы> <файл_дампа>
+		
+Подготовка СУБД. При конфигурировании СУБД необходимо:
+    Инициализировать базу данных выполнить команду (в 9.3 и выше уже не нужно):
+        service postgresql initdb
+    Установить пароль служебного пользователя:
+        - В ОС задаем пароль для пользователя postgres    
+        - В файле /var/lib/pgsql/data/pg_hba.conf меняем метод шифрования на trust (в качестве примера взят 127.0.0.1):
+            host    all          all         127.0.0.1/32         trust             или             local all postgres trust
+        - Перезапустить СУБД:
+            service postgresql start
+        - Выполнить комадны:
+            su - postgres
+            psql -U postgres -W
+            \password postgresql    или     ALTER USER postgres with password ‘new-password’;
+            \q        
+    Разрешить удалённый доступ к базе данных:
+        - В файле /var/lib/pgsql/data/postgresql.conf
+            listen_addresses = ‘*’
+        - В файле /var/lib/pgsql/data/pg_hba.conf изменить строку
+        # IPv4 local connections:
+        host    all         all         192.168.0.0/16          md5
+    Изменить максимальное количество подготовленных транзакций, для этого необходимо:
+        найти файл postgresql.conf в каталоге с файлами настройки PostgreSQL (расположение зависит от способа установки PostgreSQL);
+        в файле postgresql.conf установить значение свойства max_prepared_transactions в значение 20:
+        max_prepared_transactions = 20
+    Перезапустить сервис PostgreSQL:
+        выполнить команду:
+        service postgresql restart
+    Добавить необходимых пользователей (пользователи должны иметь возможность создавать БД):
+        выполнить команды:
+        su - postgres
+        createuser -PE first (пароль first)
+        createuser -PE second (пароль second)

@@ -1,0 +1,20 @@
+Запретит доступ к серверу (запрет на входящее соединение):
+	Для подсети: iptables -A INPUT -i eth0 -s 192.168.16.0/24 -j DROP
+	Для конкретного IP: iptables -A INPUT -i eth0 -s 192.168.219.52/32 -j DROP
+	Для конкрентного IP на конкретный порт: iptables -A INPUT -p tcp -s 192.168.219.52 -drop 80 -j DROP
+	
+Просмотр действующих правил:
+	iptables --list
+	
+Удаление действующего правила:
+
+	Просмотр правил с нумирацией:
+		iptables -L INPUT -n --line-numbers
+		
+				Chain INPUT (policy ACCEPT)
+				num  target     prot opt source               destination
+				1    DROP       all  --  192.168.219.52       0.0.0.0/0
+				2    DROP       all  --  192.168.16.0/24      0.0.0.0/0
+			
+	Удаление правила по номеру строки:
+		iptables -D INPUT 1

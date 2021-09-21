@@ -1,0 +1,104 @@
+select authors.* from authors, books where books.author_id = authors.id;
+
+select books.id, title, author_id, last_name from books, authors where books.author_id = authors.id;
+
+
+select * from authors where id in (select author_id from books);
+select distinct (author_id), authors.* from authors, books where books.author_id = authors.id;
+
+select * from authors A inner join books B on (A.id=B.author_id); ===== select authors.*, books.* from authors, books where books.author_id = authors.id;
+
+
+Для иллюстрации каждого соединения я буду использовать простую схему и набор данных:
+
+
+create table Customers (Cust_Id int, Cust_Name varchar(10))
+insert Customers values (1, 'Craig')
+insert Customers values (2, 'John Doe')
+insert Customers values (3, 'Jane Doe')
+
+create table Sales (Cust_Id int, Item varchar(10))
+insert Sales values (2, 'Camera')
+insert Sales values (3, 'Computer')
+insert Sales values (3, 'Monitor')
+insert Sales values (4, 'Printer')
+
+[В начало]
+
+Внутренние соединения
+
+Внутренние соединения - самый распространённый тип соединений. Внутреннее соединение просто находит пары строк, которые соединяются и удовлетворяют предикату соединения. Например, показанный ниже запрос использует предикат соединения "S.Cust_Id = C.Cust_Id", позволяющий найти все продажи и сведения о клиенте с одинаковыми значениями Cust_Id:
+
+
+select *
+from Sales S inner join Customers C
+on S.Cust_Id = C.Cust_Id
+
+Cust_Id     Item       Cust_Id     Cust_Name
+----------- ---------- ----------- ----------
+2           Camera     2           John Doe
+3           Computer   3           Jane Doe
+3           Monitor    3           Jane Doe
+
+Примечания:
+
+Cust_Id = 3 купил два наименования, поэтому он фигурирует в двух строках результирующего набора.
+Cust_Id = 1 не купил ничто и потому не появляется в результате.
+Для Cust_Id = 4 тоже был продан товар, но поскольку в таблице нет такого клиента, сведения о такой продаже не появились в результате.
+Внутренние соединения полностью коммутативны. "A inner join B" и "B inner join A" эквивалентны.
+
+[В начало]
+
+Внешние соединения
+
+Предположим, что мы хотели бы увидеть список всех продаж; даже тех, которые не имеют соответствующих им записей о клиенте. Можно составить запрос с внешним соединением, которое покажет все строки в одной или обеих соединяемых таблицах, даже если не будет существовать соответствующих предикату соединения строку. Например:
+
+
+select *
+from Sales S left outer join Customers C
+on S.Cust_Id = C.Cust_Id
+
+Cust_Id     Item       Cust_Id     Cust_Name
+----------- ---------- ----------- ----------
+2           Camera     2           John Doe
+3           Computer   3           Jane Doe
+3           Monitor    3           Jane Doe
+4           Printer    NULL        NULL
+
+Обратите внимание, что сервер возвращает вместо данных о клиенте значение NULL, поскольку для проданного товара 'Printer' нет соответствующей записи клиента. Обратите внимание на последнюю строку, у которой отсутствующие значения заполнены значением NULL.
+Используя полное внешнее соединение, можно найти всех клиентов (независимо от того, покупали ли они что-нибудь), и все продажи (независимо от того, сопоставлен ли им имеющийся клиент):
+
+
+select *
+from Sales S full outer join Customers C
+on S.Cust_Id = C.Cust_Id
+
+Cust_Id     Item       Cust_Id     Cust_Name
+----------- ---------- ----------- ----------
+2           Camera     2           John Doe
+3           Computer   3           Jane Doe
+3           Monitor    3           Jane Doe
+4           Printer    NULL        NULL
+NULL        NULL       1           Craig
+
+Следующая таблица показывает, строки какой из соединяемых таблиц попадут в результирующий набор (у оставшейся таблицы возможны замены NULL), она охватывает все типы внешних соединений:
+
+Соединение
+
+Выводятся …
+
+A left outer join B
+
+Все строки A
+
+A right outer join B
+
+Все строки B
+
+A full outer join B
+
+Все строки A и B
+
+Полные внешние соединения коммутативны. Кроме того, "A left outer join B " и "B right outer join A" является эквивалентным.
+
+[В начало]

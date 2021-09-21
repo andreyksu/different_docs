@@ -1,0 +1,46 @@
+$ cat getopts.sh
+
+#!/bin/bash
+while getopts "abc" opt
+do
+	case $opt in
+		a) echo "Found option $opt";;
+		b) echo "Found option $opt";;
+		c) echo "Found option $opt";;
+	esac
+done
+
+Óäîáíàÿ êîìàíäà äëÿ ïåðåáîðà îïöèé, ÷òî çàäàíû äëÿ ñêðèïòà, ïðè ýòîì íå íóæíî ñìåùàòüñÿ ïî ïåðåìåííûì êàê äåëàåò Àéíóð ÷åðåç shift
+
+
+Find
+	> find /mnt/nfs_fst -name *.txt -type f -mmin -XXXX -exec ls -al "{}" \; - Ïîèñê ôàéëîâ ñ âðåìåíåì ìîäèôèêàöèè íå áîëåå XXXX ìèíóò. Åñëè ïîñòàâèòü +XXXX òî ïîëó÷èì íå ìåííå ÷åì XXXX ìèíóò íàçàä, ò.å. óäàëÿåì áîëåå ñòàðûå ôàéëû.
+	> find /mnt/nfs_fst -name *.txt -type f -mmin -XXXX -print; - Ïîèñê ôàéëîâ ñ âðåìåíåì ìîäèôèêàöèè íå áîëåå XXXX ìèíóò.
+		Äëÿ óäàëåíèÿ ìîæíî èñïëüçîâàòü íå -exec à -delete
+		
+	> find / -mtime +50 –mtime -100; ìîäèôèöèðîâàííûå ìåæäó 100äíåé è 50äíåé
+		
+	> find /path -type d -print0 | xargs -0 ls -al; exec ðàáîòàåò â 10 ðàç ìåäëåííåå xarg. Ïî ýòîìó ìîæíî èñïîëüçîâàòü èìåííî xarg. Ïðè ýòîì -0 ïîçâîëÿåò îáðàáàòûâàòü àðãóìåíòû ñîäåðæàùèå ïðîáåëû è êàâû÷êè.
+	
+	> find /mnt/nfs_fst/ -regextype posix-egrep -regex '.*(([a-zA-Z0-9]){8}-([a-zA-Z0-9]){4}-([a-zA-Z0-9]){4}-([a-zA-Z0-9]){4}-([a-zA-Z0-9]){12})' -mmin -XXXX -type d -empty -exec rm -rf "{}" \;
+	> find /mnt/nfs_fst/ -maxdepth 6 -regextype posix-egrep -regex '.*(([a-zA-Z0-9]){8}-([a-zA-Z0-9]){4}-([a-zA-Z0-9]){4}-([a-zA-Z0-9]){4}-([a-zA-Z0-9]){12})' -mmin -XXXX -type d -empty -exec rm -rf "{}" \; èùìå ïóñòûå êàòàëîãè, íî ïðè ýòîì íå ãëóáæå 6ãî óðîâíÿ êàòàëîãîâ. Àíàëîãè÷íûé ïàðàìåòð -empty ïîäõîäèò è äëÿ ôàéëîâ.
+	
+	
+	find . \( -name "my*" -o -name "qu*" \) -print; - ïîèñê ñ ÈËÈ
+	find . \( -name "my*" -a -name "qu*" \) -print; - ïîèñêñ ñ È
+
+
+	Bash
+	#Синхронизация времени:
+	ntpdate 192.168.218.5
+	 
+	#Установка времени:
+	#date -s "YYYY-MM-DD hh:mm:ss"
+	date -s "2015-02-27 10:26:30"
+	 
+	#Время выполнения команды:
+	DATE_START=$(date +"%s")
+	<Команда>
+	DATE_STOP=$(date +"%s")
+	 
+	echo "Время выполнения команды - `date -u -d @"$(($DATE_STOP-$DATE_START))" +'%-Hh %-Mm %-Ss'`"

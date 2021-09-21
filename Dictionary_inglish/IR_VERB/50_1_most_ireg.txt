@@ -1,0 +1,50 @@
+bring---brought---brought|приносить
+read---read---read		|читать
+lose---lost---lost		|терять
+fly---flew---flown		|летать
+draw---drew---drawn		|рисовать, тащить, тянуть
+buy---bought---bought	|покупать
+wear---wore---worn		|носить
+choose---chose---chosen	|выбирать
+say------said---said	|говорить,сказать
+write---wrote-----written|писать
+stand---stood---stood	|стоять
+hear---heard---heard	|слышать
+let------let-----let	|пускать
+mean---meant---meant	|значить, подразумевать
+set---set--set			|устанавливать
+meet---met-------met	|встречать, знакомиться
+sit------sat-----sat	|сидеть
+speak---spoke---spoken	|говорить
+teach---taught---taught	|учить
+think---thought-thought	|думать
+tell---told----told		|рассказывать, сказать
+become---became--become	|становиться, делаться
+show---showed---shown	|показывать
+leave---left----left	|оставлять
+feel---felt----felt		|чувствовать
+put------put-------put	|класть, ставить
+begin---began---begun	|начинать
+keep---kept----kept		|хранить, держать
+hold----held----held	|держать
+grow---grew---grown		|расти
+run------ran-----run	|бежать, течь
+pay------paid-----paid	|платить
+make---made---made		|делать
+go------went---gone		|идти
+take---took-----taken	|брать
+come---came-----come	|приходить
+see------saw-----seen	|видеть
+know---knew----known	|знать
+get------got-----got	|получать
+give---gave-----given	|дать
+lead------led------led	|вести
+fall---fell---fallen	|падать
+send---sent---sent		|посылать
+build---built---built	|строить
+understand-understood-understood| понимать
+break---broke---broken	|ломать
+spend---spent---spent	|тратить
+cut---cut---cut			|резать
+rise---rose---risen		|подниматься
+drive---drove---driven	|вести-машину, ехать, гнать

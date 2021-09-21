@@ -1,0 +1,50 @@
+lay---laid---laid		|класть
+lie------lay---lain		|лежать
+strike---struck---struck|ударять, бить
+fight---fought---fought	|драться, бороться
+bind---bound---bound	|вязать, связывать
+bend---bent---bent		|сгибать
+steal---stole---stolen	|красть
+lend---lent---lent		|одалживать
+sink---sank---sunk		|тонуть, погружаться
+overcome---overcame---overcome|преодолеть, побороть
+seek---sought---sought	|искать
+withdraw---withdrew---withdrawn|взять назад
+tear---tore---torn		|рвать
+sell---sold---sold		|продавать
+bear---bore---born		|родиться
+eat---ate---eaten		|есть
+shake---shook---shaken	|трясти
+light---lit---lit		|освещать, зажигать
+hide---hid---hidden		|прятаться
+swing---swung---swung	|качаться, вертеться
+blow---blew---blown		|дуть
+swim---swam---swum		|плавать
+wake---woke---woken		|просыпаться, будить
+stick---stuck---stuck	|приклеивать, держаться
+sweep---swept---swept	|подметать, мчаться
+undertake---undertook---undertaken|предпринимать, совершать
+shut---shut---shut		|закрывать
+ride---rode---ridden	|ездить верхом
+hurt---hurt---hurt		|повредить, ушибить
+ring---rang---rung		|звонить
+freeze---froze---frozen	|замерзать
+shine---shone---shone	|светить, сиять
+hit---hit---hit			|ударять
+beat---beat---beaten	|бить
+arise---arose---arisen	|возникать
+spread---spread---spread|распространяться
+sleep---slept---slept	|спать
+drink---drank---drunk	|пить
+shoot---shot---shot		|стрелять
+feed---fed---fed		|кормить
+forget---forgot---forgotten|забывать
+win---won---won			|выигрывать
+hang---hung---hung		|вешать
+find---found-----found	|находить
+throw---threw---thrown	|бросать
+cast---cast---cast		|брать, кидать
+catch---caught---caught	|ловить
+cost---cost---cost		|стоить
+sing---sang---sung		|петь
+deal---dealt---dealt	|иметь дело

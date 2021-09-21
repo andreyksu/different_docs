@@ -1,0 +1,64 @@
+-----------------------------------------------------------
+>linen		|белье (постельное) ['lɪnɪn] 
+put on		|надеть
+get dressted|одеваться (dress up - изысканно одеться)
+have on		|быть одетым во что либо; иметь преимущество перед (кем-л.)
+shoes		|обувь	[ʃu:z]
+boots		|ботинки [buːt]
+trainers	|кросовки ['treɪnəz]
+wear		|носить [we(ə)r]
+clothe 		|одевать (кого-либо) [klō(T͟H)],выражать,формулировать
+clothes		|одежда [klō(T͟H)z]
+dress		|платье::одевать,наряжать
+scarf		|шарф [skärf]
+coat		|пиджак,пальто [kəut]
+skirt		|юбка [skɜːt]
+shirt		|рубашка,платье [SHərt]
+shorts		|шорты [ʃɔːts]
+sweater		|свитер ['swetə]
+trousers/pants	|штаны ['trauzəz]
+jeans		|джинсы [dʒiːnz]
+suit		|костюм [s(j)u:t] 
+socks		|носки [sɔk]
+jacket		|жакет
+scarf		|шарф [skɑːf]
+-----------------------------------------------------------
+bed			|кровать [bed]
+pillow		|подушка ['pɪləu]
+towel		|полотенце ['tauəl]
+table		|стол ['teɪb(ə)l]
+lamp		|лампа настольная [læmp]
+light		|лампа потолочная [laɪt]
+remote control|пульт [rɪ'məut] [kɔn'trəul]
+floor		|пол [flɔ:]
+bathroom	|ванная комната ['bɑ:θru(:)m]
+bath		|ванная [bɑ:θ]
+shower		|душ ['ʃauə]
+cupboard	|шкаф ['kʌpbəd]
+chair/seat	|стул [ʧeə]/[si:t]
+bedside table|шкафчик,тумбочка
+
+shelf		|полка
+sofa		|диван
+wardrobe	|шкаф [ˈwɔːdrəʊb]
+plant		|растения
+light		|свет
+fireplace	|камин
+fridg		|холодильник
+cooker		|плита
+
+ceiling		|потолок
+floor		|пол
+balcony		|балкон
+-----------------------------------------------------------
+swimming pool	|бассейн ['swɪmɪŋ] [puːl]
+spa			|курот [spɑː]
+toilet		|туалет ['tɔɪlɪt] 
+restaurant	|рестаран ['rest(ə)rɔŋ,-rɔnt] 
+bar			|бар [bɑː]
+lift		|лифт [lɪft]
+gym			|спорт зал [dʒim] 
+gift shop	|сувенирная [gɪft]
+reception	|ресепшен [rɪ'sepʃ(ə)n] 
+garden		|садик [gɑ:dn]
+car park	|пакровка [kɑː] [pɑːk]

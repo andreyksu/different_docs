@@ -1,0 +1,60 @@
+<custom-handler name="LOGSTASH_SYNC_HANDLER" class="ru.voskhod.logging.handlers.HttpHandler" module="org.jboss.logmanager.ext">
+                    <formatter>
+                        <named-formatter name="LOGSTASH_FORMATTER"/>
+                    </formatter>
+                    <properties>
+                        <property name="host" value="192.168.10.55"/>
+                        <property name="port" value="8000"/>
+                        <property name="retriesCount" value="180"/>
+                        <property name="retryTimeoutMs" value="5000"/>
+                        <property name="dropHandler" value="DROP"/>
+                    </properties>
+                </custom-handler>
+Миш
+давай 3 ретрая?
+180 - дофига
+память пухнет
+
+От Баранова - нужно еще Касандру отключать.
+
+КК открывает сокет до LogStash(срвер smevlog), а тот распихивает данные в Elastic и Redis.
+	По работе на UAT:
+		Отключили нестабильный Redis (log01)
+		Уменьшили количество переотправок логов из КК в LogStash.
+
+Redis			- сетевое журналируемое хранилище данных типа ключ-значение. Хранит в RAM. Снабжен механизмов снимков и журналирования для постоянного хранения на диске.
+Elastic 		- хранение логов.
+					Elasticsearch: хранит все логи.
+
+LogsStash 		- обработка входящих логов.
+				– это открытый инструмент для сбора, обработки и централизованного хранения логов.
+					После принятия и обработки данных из лового, мы перенаправляем в elasticsearch.
+				
+Kibana			- Web интерфейс.
+				– это веб-интерфейс для поиска и визуализации логов, индексированных с помощью Logstash.
+Оба эти инструмента основаны на поисковом движке Elasticsearch, который используется для хранения логов.								
+
+FileBeat 		- перенаправляет логи. Перенаправляет логи в LogsStash
+
+RabbitMQ 		— платформа, реализующая систему обмена сообщениями между компонентами программной системы (Message Oriented Middleware) на основе стандарта AMQP (Advanced Message Queuing Protocol)
+					RabbitMQ ‒ это брокер сообщений. Его основная цель ‒ принимать и отдавать сообщения. Его можно представлять себе, как почтовое отделение: когда Вы бросаете письмо в ящик, Вы можете быть уверены, что рано или поздно почтальон доставит его адресату 
+
+FileBeat→Logstash(listener)→RabbitMQ→Logstash(indexer)→ElasticSearch→Kibana
+
+
+LogStash собирает и обрабатывает данные, дальше как правило LogStash создает индекс в Elasticsearch каждый день, и отправляет туда данные. Дальше в Elastic можно делать BackUp_ы указанных индексов или удалять их...
+
+Elastic оперирует следующими понятими
+	Index 					- аналог в SQL DB
+		mapping/type		- маппинг типов. Type аналог тиблицы в sql, а mapping это по сути схема.
+			Document		- 
+				Field		- 
+		
+		curl -XPUT "IP/<Index>/<mapping/Type>/<Id>?pretty"
+		curl -XPUT "IP/<_index>/<_type>/<_id>?pretty"
+	
+curl -XDELETE 'http://localhost:9200/logstash-2017.08.08'
+
+1. curl -XGET 'http://localhost:9200/logstash-2017.08.08?pretty' -- отобразит информацию по индексу logstash-2017.08.08
+	1.1. curl -XGET 'http://localhost:9200/logstash-2017.08.08/_settings,_mapping?pretty'  - Отобразит соответствющие разделы _settings и _mappings
+	1.2. curl -XGET 'http://localhost:9200/logstash-2017.08.09/logs/_all?pretty' - отобразит информацию по соответствию наимнования _index, _type, _id

@@ -1,0 +1,88 @@
+CSS
+body input[type="checkbox"]:not([checked])
+:not[id$="s"]
+a[title*="Raspberry Pi Home"]:not(:only-child)
+
+
+XPath
+//table//td[@class="top"]/table//tr/td/a[contains(@title, 'Raspberry')]
+//table//td[@class="top"]/table//tr/td/a[contains(text(), 'Raspberry')]
+//table//td[@class="top"]/table//tr/td/a[starts-with(@title, 'Raspberry')]
+
+
+
+//*[contains(@id, 'sometext[0-9]+_text')]
+//*[starts-with(@id, 'sometext') and ends-with(@id, '_text')]
+//*[matches(@id, 'sometext\d+_text')] - не получилось
+//*[regexp:test(@id, 'sometext[0-9]+_text')]
+
+fn:matches(subject, pattern, flags) 
+fn:replace(subject, pattern, replacement, flags) 
+fn:tokenize(subject, pattern, flags) 
+
+
+//            System.setProperty("webdriver.firefox.bin", "/usr/bin/firefox");
+
+public static WebDriver chromeBrowser() throws Throwable {
+        System.setProperty("webdriver.chrome.driver", "C:\\chromedriver-location\\chromedriver.exe");
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--no-sandbox");
+        WebDriver browser = new ChromeDriver(options);
+        browser.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        return browser;
+    }
+	
+	
+
+	
+	
+	
+#! /bin/bash
+cd /usr/vendor/bin
+java -Dsun.jnu.encoding=cp1251 -Dfile.encoding=cp1251 -Ddefault.client.encoding=cp1251 -Dclient.encoding.override=cp1251 -jar selenium-server-standalone-2.48.2.jar -role hub -Dwebdriver.chrome.driver=chromedriver &
+java -Dsun.jnu.encoding=cp1251 -Dfile.encoding=cp1251 -Ddefault.client.encoding=cp1251 -Dclient.encoding.override=cp1251 -jar selenium-server-standalone-2.48.2.jar -role node -hub http://localhost:4444/grid/register -nodeConfig selenium-config-node.json -Dwebdriver.chrome.driver=chromedriver
+
+
+//        System.setProperty("webdriver.gecko.driver", "/usr/bin/firefox");
+//        webDriver.get("https://uslugi.tatarstan.ru/");
+//        webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+Что же представляют собой “правильно спроектированные тесты”, какими особенностями должны обладать тесты и/или тестовый фреймворк, чтобы обеспечить возможность выполнения тестов как в изоляции, так и в составе произвольной группы?
+
+    Тесты не должны иметь предусловий. Если для выполнения теста необходимо создать определенную тестовую ситуацию, тест должен сам позаботиться об этом, не полагаясь на то, что это сделают ранее выполненные тесты.
+    Необходим механизм отслеживания состояния браузера и перезапуска в случае сбоя. Этим должен, конечно, заниматься фреймворк, а не тесты.
+    Необходим механизм принудительного перезапуска браузера по требованию теста – если тест не может создать нужную ситуацию без перезапуска браузера, нужно дать ему последний шанс.
+
+Вот несколько причин выделения отдельного браузера для группы тестов, с которыми мне приходилось сталкиваться в своей практике (список, конечно, не претендует на полноту):
+
+    параллельный запуск, каждая группа выполняется в своем браузере,
+    запуск в разных браузерах или в одном и том же браузере, но с разными настройками – группа тестов выполняется сначала в одном браузере, потом в другом (да, можно решить это и другим способом – либо разные браузеры работают параллельно, либо сначала все тесты выполняются в одном браузере, потом в другом, но иногда требуется и выполнение сначала полностью одной группы, а потом переход к другой),
+    профилактика сбоев браузера – например, Firefox знаменит тем, что при выполнении большого количества тестов он захватывает много оперативной памяти (вероятно, из-за наличия “утечек”), начинает работать медленнее и может совсем “упасть”, поэтому его необходимо периодически перезапускать,
+    необходимость эмуляции “нового пользователя”, который никогда ранее не заходил на сайт и не пользовался приложением (можно пытаться чистить куки и кеш, но проще перезапустить браузер),
+
+	
+	
+
+//    @Test(dependsOnMethods = "testLinkToOfficalPortal", alwaysRun = true, priority = 2)
+//    @Test(groups = {"second"})
+//    @Test(enabled = false)
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Selenium1">
+    <test name="SmokeTest1" verbose="1" annotations="JDK">
+        <groups>
+            <run>
+                <include name="second"></include>
+                <include name="first"></include>
+            </run>
+           <dependencies>
+                <group name="fist" depends-on="second"></group>
+            </dependencies>
+        </groups>
+        <packages>
+            <package name="ru.andreyksu.annikonenkov.selenium.gosuslugi.*"></package>
+        </packages>
+    </test>
+</suite>

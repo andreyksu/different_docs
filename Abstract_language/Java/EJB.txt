@@ -1,0 +1,239 @@
+EJB компонент, выполняется внутри EJB контейнера, а тот в свою очередь в EJB-сервера.
+EJB-контейнер -- это то место, где ``живет'' EJB-компонент.
+	EJB-контейнер реализует для находящихся в нем компонент такие сервисы как транзакции (JTA - transaction), управление ресурсами, управление версиями компонент итд.
+		Согласно спецификации EJB-3 контейнер предоставляет службы, применимые только к сеансовым компонентам и MDB. Операция добавления компонента EJB3 в контейнер называется развертыванием (deployment). После того, как EJB-компонент благополучно развернут в контейнере, он готов к использованию приложениями.
+	Как правило, в одном EJB-контейнере живет несколько однотипных EJB-компонент. 
+
+EJB-объект - это прокси, для EJB компонент, по сути реализует интерфейс компоненты. Нужен для удаленного вызова методов EJB компоненты. 
+	EJB-объект - создается без участия разработчика (внутренние механизмы).
+	
+Компонент = бин.
+	EJB — это обычный Java класс, отмеченный одной из специальных аннотаций. Такие классы называют бинами. Такие классы называют бинами. В зависимости от того, какой аннотацией отмечен класс, он будет являться представителем того или иного типа EJB (бинов).
+
+
+Session Beans:
+	Session beans are used to build the business logic.
+		- Доступ можно получить через dependency injection or JNDI.
+		- Для сервлетов доступно через CDI. Т.е. используя @EJB
+	
+
+	StateFull бин нельзя использовать в Servlet(into classes that are multi-threaded in nature, such as servlets and JSF managed beans) - так как инстанс сервлета будет шариться между всеми клиентами.
+		If you want to use stateful session beans in your application then you need to perform a JNDI lookup and store the returned EJB instance in the HttpSession object.
+		This way, the same user reaches the same bean instance for future activity, it also scopes the EJB instance to the users session.
+
+
+Entity Beans
+					Служит для постоянной составляющей, хранимой в БД. Может быть доступен одновременно нескольким пользователям.
+						- Например, entity bean может представлять собой строку какой-нибудь таблицы из базы данных, или даже результат операции SELECT. В объектно-ориентированных базах данных, entity bean может представлять собой отдельный объект, со всеми его атрибутами и связями.
+						- Каждый экземпляр ``бина'' имеет свой уникальный идентификатор.
+
+					Entity beans представляет объекты в том смысле, что Контейнер прозрачно хранит их состояния синхронно с данными в некотором другом постоянном хранилище, обычно это реляционная база данных. По этой причине entity beans используются для представления бизнес-сущностей, таких как клиент, корзина покупок и так далее. Entity beans не реализуют бизнес-логику, за исключением самосодержащейся логики напрямую связанной с внутренними данными.
+
+					Две стратегии:
+						- Container Managed Persistence - живучесть управляемая контейнером. Т.е. контейнер заботиться о сохранении. В основном этот вид используется. Т.к. упрощает миграцию.
+						- Bean Managed Persistence - живучесть управляемая бином. Сам бин заботится о сохранности. В основном используется, когда контейнер не поддерживает хранилище.
+
+					Entity Beans (объектные бины) — определены в спецификации JPA (Java Persistence API) и используются для хранения данных;					
+
+					JPA, или Java Persistence API — это спецификация, которая обеспечивает объектно-реляционное отображение (ORM — Object-Relational Mapping) Java объектов (Entity бинов) и предоставляющая API для сохранения, получения и управления такими объектами. 
+					JPA позволяет представлять данные из БД в виде Java-объектов, а также сохранять Java-объекты в виде записей в базе данных. В роли подобного объекта может выступать не каждый класс, а как раз-таки Entity бины.
+
+					Entity Bean — это Java класс, который является отображением некоторой таблицы в базе данных. Отображение (маппинг) достигается за счет использования специальных аннотаций. С их помощью осуществляется сопоставление Java-класса с таблицей в базе данных, а также сопоставление полей Java-класса c полями таблицы БД. 
+
+
+
+
+Session Beans
+
+					Session bean представляет собой EJB-компоненту, связанную с одним клиентом. ``Бины'' этого типа, как правило, имеют ограниченный срок жизни (хотя это и не обязательно), и редко участвуют в транзакциях. В частности, они обычно не восстанавливаются после сбоя сервера. Может быть примерном бин что генерирует для клиента странички, после того каклиент ушел, бин удалился. При этом без сохранения состояния - т.е. цель не сохранить сотояние, а обслужить клиента.
+
+					Они не постоянны, и вместо дискретных компонентов, которые реализуют бизнес-логику, реализуют, например, шаги, требуемые для проверки и покупки некоторых продуктов в виртуальную корзину. Session beans могут взаимодействовать с другими session beans, чтобы получить доступ к дополнительной бизнес-логике, и они используют entity beans, когда им нужно получить доступ к хранимой информации.
+
+					Три вида:
+						- Stateless session beans - SLSB.
+								- Не хранит информацию между вызовами И соответственно экземпляр может передаваться между клиентами. Этот бин хорошо подходит под REST/HTTP. Но нужно заботиться о потокобезопасности к данным.
+								- Stateless бины используются для реализации бизнес-процессов, которые можно завершить за одну операцию. Например, проверка кредитной истории клиентов.
+						- Stateful session beans - SFSB
+								- Т.е. хранит информацию между вызовами. Допустим для заказа/бронирования билетов. Первый вызов передаем кол. мест, вторым вызовом покупаем. Так вот для такого бина, нам при втором вызове не нужно будет передавать кол. мест, т.к. в первом вызове уже передали и наш бин запомнил это значение. Или поддержка в актуальном состоянии корзины покупок в интернет-магазине для каждого пользователя.
+								- Cохраняют информацию о своем состоянии между обращениями к нему от одного и того же клиента и завершают свое существование по явному запросу от клиента. Достигается это за счет того, что stateful бины уникальны для каждого клиента. 
+								- Жизненным циклом данных бинов управляет EJB контейнер. Данные бины также уничтожаются, когда клиент завершает свою работу.
+
+						- Singleton (один объект на все приложение; начиная с версии EJB 3.1).
+								Сессионные бины одиночки (singleton) инициируются один раз за время существования приложения и существуют все время "жизни" приложения. Такие бины разрабатываются для ситуаций, в которых одно состояние должно быть разделено между всеми клиентами. 
+
+					Session Beans, или сессионные бины — определенный вид бинов. Они инкапсулируют в себе бизнес-логику, которую клиент может программно вызвать посредством вызова методов этого бина.
+
+
+Message-Driven Beans
+					Message Driven Beans (бины, управляемые сообщениями);
+
+					MDB работает в кооперации с системой сообщений JAVA [Java Messaging System](JMS), которая является абстрактным API для системы Message-Oriented Middleware (MOM).
+						- Коротко, система MOM предоставляет модель сообщений с публичной подпиской, основанной на асинхронной, распределенной очереди сообщений. 
+						- MOM сообщение суть пакет информации, которое кто-то публикует, а кто-то другой интересуется им и принимает его. MOM сообщения публикуются в и извлекаются из очереди или канала. Источник сообщения и подписчик могут находиться в двух разных процессах, а сообщение посылается в MOM очередь, которая гарантирует, что оно будет доставлено, даже в случае сбоя системы.
+					MDB обычно реализуются для выполнения некоторых действий при получении сообщений и выступают в роли объектно-ориентированных точек соединения между подсистемами, взаимодействующих посредством JMS. Например, MDB может реализовать посылку электронной почты администратору (используя JavaMail API), когда будет получено сообщение об определенном событии. 
+
+					Никогда не вызывается клиентом.
+						Такие бины чаще всего выступают в роли слушателей JMS (Java Message Service) сообщений и служат для организации асинхронного обмена сообщениями между частями системы.
+
+---------------
+Клиент работает с Session Bean, а seesion bean в свою очередь может использовать др. session bean и как правило обрабатывает/работает с Entity. Как правило обработка с Entity выполняется посредством EntityManager. Который через конфигурацинный файл ...ds.xml и persistance.xml связывается с определнной БД - др. словами с DataSource.
+
+EntityManager API manages the lifecycle of entities.
+	The EntityManager figures out how to persist the domain by looking at the ORM configuration, it performs the CRUD.
+
+	Entity может быть managed т.е. когда она attached к EntityManager - соответственно ее состояние мониторится и отражается в БД (изменение, обновление все автоматом отслеживается и отражается в БД)
+		И моежт быть detached - not managed by the EntityManager but does exist. Когда мы клонируем или сереализуем этот Entity. Допустим для перечачи в слой клиента/представления. После того как клиент обновил состояние этой сущности и получили снова на сервак, нужно снова приаттачить к EntityManager
+
+		Аn entity will also be detached immediately when no transaction is associated with it.
+
+		An entity becomes attached when you use persist, merge, refresh or find.
+			The merge and refresh methods are intended for entities that have been retrieved from the database and are in detached state, merge updates the database with the data held in the entity, and refresh does the opposite. You can detach an entity to upload it to the web tier, the web tier can then update it and then send it back, we then reattach it and it updates the database.
+
+
+	Внутри EntityManager лежит persistence context - который собственно и управляем жизненным цилокм сущности (это есть сердце все этого).
+		in simple terms a persistence context is a self-contained collection of entities managed by an EntityManager during a given persistence scope.
+
+		There are two different scopes
+			Transaction-scoped EntityManager 
+					If a persistence context is under transaction scope, entities attached during a transaction are automatically detached when the transaction ends. All persistence operations must occur inside the transaction, once the transaction is either committed or rolled back all entities are detached after they have been synchronized with the database.
+			Extended EntityManager 
+					An Extended EntityManager can only be used with stateful session beans and lasts as long as the bean instance is alive. Until the EntityManager is closed by the session bean being destroyed the entities will remain managed, unless explicitly remove
+
+
+		The container will take care of opening, closing and looking up the EntityManager behind the scenes.
+
+		One important point to remember is that the EntityManager is not thread safe, so do not go injecting them frivolously and do not inject them into a web component.
+
+
+	Порядок работы с Entity:
+		Сначало просто создаем как обычный объект - какую-то сущность, наполняем ее, после чего вызываем persist - что означает создать новую запись в таблице (не обновить, а создать). Если Id вдруг совпадает, то будет выбрашен PersistenceException.
+
+
+---------------
+
+JNDI
+
+	https://docs.jboss.org/jbossas/jboss4guide/r1/html/ch3.chapter.html
+
+	Разделяют два вида имён:
+		composite 	- составной
+		compound	- сложный
+
+	Это пример composite имени, который состоит из двух compound имен:
+		ahost.someorg.org:/tmp/remotefile.txt
+
+	Два compound
+		ahost.someorg.org и /tmp/remotefile.txt
+
+	A file pathname in the UNIX file system is an example of a compound name.
+		Each component in a compound name is an atomic name.
+
+		If the component comes from a hierarchical namespace, that component can be further parsed into its atomic parts by using the javax.naming.CompoundName class. The JNDI API provides the javax.naming.CompositeName class as the implementation of the Name interface for composite names.
+
+
+	Contex
+		All naming service operations are performed on some implementation of the Context interface. The javax.naming.IntialContext class implements the Context interface, and provides the starting point for interacting with a naming service.
+
+		The javax.naming.Context interface is the primary interface for interacting with a naming service.
+			The Context interface represents a set of name-to-object bindings.
+			Every context has an associated naming convention that determines how the context parses string names into javax.naming.Name instances.
+
+		The Context implementation used internally by the InitialContext class is determined at runtime.
+			The default policy uses the environment property java.naming.factory.initial, which contains the class name of the javax.naming.spi.InitialContextFactory implementation. You obtain the name of the InitialContextFactory class from the naming service provider you are using.
+
+			### JBossNS properties
+			java.naming.factory.initial=org.jnp.interfaces.NamingContextFactory
+			java.naming.provider.url=jnp://localhost:1099
+			java.naming.factory.url.pkgs=org.jboss.naming:org.jnp.interfaces
+
+
+		An example of where the restricting a binding to the java: context is useful would be a javax.sql.DataSource connection factory that can only be used inside of the JBoss server where the associated database pool resides. On the other hand, an EJB home interface would be boung to a globally visible name that should accessible by remote client.
+
+		Context iniCtx = new InitialContext();
+		Context compEnv = (Context) iniCtx.lookup("java:comp/env");
+		Доступен только для одного компонента. И не доступен для др. компонента. Т.е. не виден между компонентами. Если мы это объявили в EJB-Bean-1 то EJB-Bean-2 не будет достуно это пространство и наоборот.
+
+		There are three commonly used levels of naming scope in JBoss: names under java:comp, names under java:, and any other name. As discussed, the java:comp context and its subcontexts are only available to the application component associated with that particular context.
+
+
+По хорошему JPA живет в рамках JTA.
+	Т.е. транзацкии JPA живет в рамках транзацкции JTA (т.е. управляется через JTA).
+	Бины могут быть двух видов: 
+		- Container-Managed Transactions (By default, if no transaction demarcation is specified, enterprise beans use container-managed transaction demarcation.)
+				- Typically, the container begins a transaction immediately before an enterprise bean method starts and commits the transaction just before the method exits. Each method can be associated with a single transaction. Nested or multiple transactions are not allowed within a method.
+		- Bean-Managed Transactions
+	При этом есть еще отдельная стратегия, когда один метод EJB вызывает метод др. EJB. В зависимости от стратегии, при таком вызове будте создана новая транзация, или использоваться.
+
+
+
+---------------------------------------
+Java EE applications are made up of components.
+	A Java EE component is a self-contained functional software unit that is assembled into a Java EE application with its related classes and files and that communicates with other components.
+	
+Containers are the interface between a component and the low-level platform-specific functionality that supports the component. Before it can be executed, a web, enterprise bean, or application client component must be assembled into a Java EE module and deployed into its container.
+
+A stateless session bean as per its name does not have any associated client state, but it may preserve its instance state. EJB Container normally creates a pool of few stateless bean's objects and use these objects to process client's request. Because of pool, instance variable values are not guaranteed to be same across lookups/method calls.
+		Короче stateless - хранит состояние инстенса (данный бин просто не хранит состояние клиента).
+
+Typically, the container begins a transaction immediately before an enterprise bean method starts and commits the transaction just before the method exits. Each method can be associated with a single transaction. Nested or multiple transactions are not allowed within a method.
+	Container-managed transactions do not require all methods to be associated with transactions. When developing a bean, you can set the transaction attributes to specify which of the bean’s methods are associated with transactions.
+
+В рамках контейнера может быть несколько компонентов.
+	Компонентом считается то что задекларированно в application.xml
+	
+@TransactionAttribute - The TransactionAttribute annotation can be used for session beans and message driven beans. It can only be specified if container managed transaction demarcation is used.
+	container managed transaction demarcation - разграничение транзакций управляемые контейнером.
+	
+Container-managed транзакции не поддерживают вложенные и мульти-транзакции.
+	Container-managed транзакция не должна использовать методы управления транзакциями, т. к. эти операции возложены на контейнер EJB.
+	
+	Всегда, по умолчанию используется container-managed, если не указано иное.
+	
+в container-managed транзакциях существуют запрещенные методы, т.к. могут пересекаться с границами текущей транзакции:
+
+    commit, setAutoCommit, и rollback методы класса java.sql.Connection
+    getUserTransaction метод класса javax.ejb.EJBContext
+    любой метод класса javax.transaction.UserTransaction
+
+
+http://setgetweb.com/p/WAS8/twbs_jaxrs_jcdi.html	
+
+Add the @javax.enterprise.context.RequestScoped annotation to your root resource classes to ensure that your JAX-RS root resource class has a unique instance per request. This is the default behavior in non-JCDI-enabled applications.
+
+
+
+
+
+
+Stateless Session Beans (SLSB) are not tied to one client and there is no guarantee for one client to get the same instance with each method invocation (some containers may create and destroy beans with each method invocation session, this is an implementation-specific decision, but instances are typically pooled - and I don't mention clustered environments). In other words, although stateless beans may have instance variables, these fields are not specific to one client, so don't rely on them between remote calls.
+
+In contrast, Stateful Session Beans (SFSB) are dedicated to one client for their entire life, there is no swapping or pooling of instances (it may be evicted from memory after passivation to save resources but that's another story) and maintain conversational state. This means that the instance variables of the bean can keep data relative to the client between method invocations. And this makes possible to have interdependent method calls (changes made by one method affect subsequent method calls). Multi-step processes (a registration process, a shopping cart, a booking process...) are typical use cases for SFSB.
+
+One more thing. If you are using SFSB, then you must avoid injecting them into classes that are multithreaded in nature, such as Servlets and JSF managed beans (you don't want it to be shared by all clients). If you want to use SFSB in your web application, then you need to perform a JNDI lookup and store the returned EJB instance in the HttpSession object for future activity. Something like that:
+
+try {
+    InitialContext ctx = new InitialContext();
+    myStateful = (MyStateful)ctx.lookup("java:comp/env/MyStatefulBean");
+    session.setAttribute("my_stateful", myStateful);
+} catch (Exception e) {
+    // exception handling
+}
+
+
+
+@Stateless
+public class MyBean {
+    @PersistenceContext EntityManager em;
+
+    public Foo getFoo(String name) {
+        Query q = em.createQuery("SELECT f FROM Foo f WHERE f.name = :name");
+        q.setParameter("name",name);
+        return q.getSingleValue();
+    }
+}
+
+
+@Resource DataSource x;
+
+
+In the messaging world, messages are not sent directly to other applications. Instead, messages are sent to destinations, known as queues or topics.

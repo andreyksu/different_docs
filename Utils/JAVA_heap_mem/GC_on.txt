@@ -1,0 +1,9 @@
+JBoss gc-logs включает логи gc. Ќужно указать при запуске. ¬озможно работает и дл€ др. java приложений
+	-XX:+PrintGCDetails
+	-XX:+PrintGCTimeStamps
+	-Xloggc:file.log
+	-XX:+UseGCLogFileRotation
+	-XX:NumberOfGCLogFiles=N
+
+”тилита, что строит графики из выводов Jbossa по GC
+	ga456.jar - ей скармливаютс€ логи из того, что выводитс€ в первом случае, см. выше.

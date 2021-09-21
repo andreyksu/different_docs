@@ -1,0 +1,37 @@
+cereal			|хлебный злак,зерновые культуры['sɪərɪəl]
+vegetables	|овощи
+juice		|сок
+jam			|джем
+butter		|масло [ˈbʌtər]
+sugar		|песок [ˈʃʊɡər]
+salt		|соль [sɔːlt]
+salmon		|лосось, лососина  [ˈsæmən]
+tuna		|тунец [ˈtjuːnə]
+chicken		|курица [ˈtʃɪkɪn]
+sausages	|колбаса [ˈsɒsɪdʒ]
+steak		|стейк,бифштекс [steɪk]
+ham			|ветчина [hæm]
+spices		|приправа, специя [spaɪs]
+herbs		|прянная или лекарственная трава [hɜːb]
+pasta		|мокороны [ˈpæstə]
+carrots		|морковь [ˈkærət]
+lettuce		|салат-латук [ˈletɪs]
+mushrooms	|гирб [ˈmʌʃruːm]
+onions		|лук [ˈʌnjən]
+peas		|горох [piː]
+peppers		|перец
+potatoes	|кортофель [pəˈteɪtəʊ]
+tomatoes	|томат [təˈmɑːtəʊ]
+strawberries|клубника [ˈstrɔːbəri]
+snacks		|легкая закуска [snæk]
+cake		|торт [keɪk]
+biscuits	|печенье [ˈbɪskɪt]
+chocolate	|шоколад [ˈtʃɒkələt]
+sandwich	|бутерброд [ˈsænwɪdʒ]
+sweets		|конфета [swiːt]
+yogurt/yoghurt	|йогур [ˈjɒɡət]
+
+tin			|консерва [tɪn]
+jar			|банка	[ʤɑː]
+can			|жестяная банка
+bottle		|бутылка

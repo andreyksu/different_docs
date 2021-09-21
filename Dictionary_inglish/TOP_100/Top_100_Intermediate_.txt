@@ -1,0 +1,100 @@
+abolish;отменять
+addiction;зависимость
+agriculture;сельское хозяйство
+amateur;любитель
+ambassador;посол
+ambulance;скорая помощь
+anger;злость
+approve;одобрять
+apron;фартук
+arrange;организовывать
+arrogant;высокомерный
+boast;хвастаться
+bodyguard;телохранитель
+canteen;столовая
+celebrity;знаменитость
+childhood;детство
+civilian;штатский
+collapse;разрушаться
+commercial;рекламный ролик
+commission;комиссия
+confidence;уверенность
+contemptuous;презрительный
+contribute;делать пожертвования
+convenient;удобный
+correspondence;переписка
+courage;смелость
+craving;страстное желание
+crawl;ползать
+creative;творческий
+dedication;верность
+deliver;доставлять
+depth;глубина
+descend;спускаться
+destination;назначение
+deteriorate;ухудшать
+disappointment;разочарование
+dismiss;отпускать
+dissolve;разрушать
+distribute;распространять
+district;район
+elaborate;разрабатывать
+eligible;имеющий право
+embarrassment;затруднение
+emergency;критическое положение
+entourage;окружение
+evidence;доказательство
+extinction;вымирание
+famine;голод
+flood;потоп
+generosity;щедрость
+gluttony;обжорство
+hiccup;икота
+honesty;честность
+household;быт
+humanity;человечество
+humiliate;унижать
+interpret;толковать
+investigate;исследовать
+justice;справедливость
+kindness;доброта
+knowledge;знание
+landlord;землевладелец
+liberty;свобода
+maintain;поддерживать
+mature;зрелый
+mirror;зеркало
+naughty;непослушный
+patience;терпение
+persuade;убеждать
+petrol;бензин
+pleasure;удовольствие
+prejudice;предубеждение
+prescription;рекомендация
+profit;выгода
+promotion;продвижение
+prosecutor;Прокурор
+quarrel;ссора
+rapport;хорошие отношения
+referee;судья
+reference book;справочник
+rehearsal;репетиция
+remarkable;значительный
+resentment;негодование
+ruthless;безжалостный
+satchel;сумка
+software;программное обеспечение
+spokesman;представитель
+squeeze;сжимать
+stationary;неизменный
+sufficient;достаточный
+superstition;суеверие
+surgeon;хирург
+surveyor;землемер
+suspect;подозревать
+vacancy;свободное место
+vain;тщеславный
+valuable;ценный
+walkie-talkie;портативная рация
+whistle;свистеть
+withdraw;извлекать

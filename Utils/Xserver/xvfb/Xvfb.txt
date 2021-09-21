@@ -1,0 +1,80 @@
+1. В Астра в качества менеджера дисплеев используется fly-dm (в Ubunut gdm или xdm)
+		Для остановки менеджера дисплеев используется команда start-stop-daemon --stop --quiet --pidfile /var/run/fly-dm.pid --exec /usr/bin/fly-dm
+		Для старта менеджера дисплеев используется команда start-stop-daemon --start --quiet --pidfile /var/run/fly-dm.pid --exec /usr/bin/fly-dm
+	Как запустить менеджер дисплеев для Xvfb не разобрался. Автоматом запускется X11org
+	Однако под xvfb удалось запустить openbox.
+	
+2.1 Запуск Xvfb осущетвляется следущим образом:
+		Xvfb :2 -screen 0 1920x1080x24  -pixdepths 32 &
+		где: :2 DISPLAY
+		
+2.2	Либо можно использовать обертку над Xvfb, команда xvfb-run
+		xvfb-run -f /tmp/<any-file>.xauth --server-num=2 --server-args="-screen 0 1920x1080x24 -dpi 96 -pixdepths 32 -auth /tmp/<any-file>.xauth" <programm>
+		где: /tmp/<any-file>.xauth  - файл авторзиции по аналогии с .Xauthority
+		
+3. Для просмотра изображения используется x11vnc. (vnc4server - не подходит)
+	Подключение производится следующим образом:		
+		x11vnc -auth /tmp/<any-file>.xauth -display :2 -listen <IP-address> &
+		где: /tmp/<any-file>.xauth  - файл авторизации указанный при запуске Xvfb 
+
+4. Запустить еще программу под уже существующий xvfb сервер можно так		
+		XAUTHORITY=/tmp/<any-file>.xauth
+		где: /tmp/<any-file>.xauth  - файл авторизации указанный при запуске Xvfb
+		DISPLAY=:2 <programm> &
+				
+5. Снять скрин
+		import -display :2.0 -window root <path_to_folder><file_name>.png
+
+Результаты запусков sikuli-тестов.
+	Тесты запустились, шаблоны искомые при тесте находились sikuli при условии, 
+что они были сделаны с виртуального дисплея. При выполнении этого условия тесты проходят успешно. 
+Снятие скриншота в конце теста работает. Работа ведется 24 битными изображениями, возможно, 
+это является причиной проблемы поиска изображений в ходе теста. Для взаимодействия с окнами запускались 
+оконные менеджеры twm, openbox, fly-wm. Запуск осуществлялся с помощью пункта 2.2, где вместо <programm>
+указывался оконный менеджер. Тесты скорректированные в одном из оконных менеджеров работают и с другими. 
+Различия в искомых шаблонах заключаются в шрифте.
+	Тесты, скорректированные в одном из оконных менеджеров, работают и с другими. 
+Причиной корректировки было несоответствие dpi. Скорректированы параметры запуска сессии, добавлен параметр –dpi 96, 
+что соответствует значению dpi на «реальном» дисплее. После добавления параметра dpi 
+тесты написанные для «реального» дисплея без корректировок работают в сессии xvfb. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Для запуска приложения на существующею X сессию.
+
+
+xauth extract $HOME_USER_DIR/.Xauthority $DISPLAY
+        chown $USER_NAME:$GROUP $HOME_USER_DIR/.Xauthority
+        su -l $USER_NAME -c "
+            XAUTHORITY=$HOME_USER_DIR/.Xauthority
+            export SWT_GTK3=0
+            cd $CLIENT_DIR
+            -----------------------------"
+        sleep $TIME_OUT
+		
+		
+
+xauth list > /tmp/Xsesion
+     read XSESSION < /tmp/Xsesion
+         su -l $USER_NAME -c " xauth add $XSESSION; \
+                          cd $CLIENT_DIR; \
+						---------------------------------------------"
+         sleep $TIME_OUT

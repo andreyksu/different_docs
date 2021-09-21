@@ -1,0 +1,82 @@
+JIT
+	* Компилирует во время исполнения байт-код в нативный-код (на базе статистики исполнения)
+		- Тратит процессорное время на компиляцию и анализ
+		# Компилируюя код она распологает эту область вне heap - Называется в codeCache (область небольшая, и компилируется не все приложение а только на базе анализа/профайлигна) 
+		* Есть три подхода:
+			** Client (C1) 
+				# Смотрит что выполняется больше 1500 раз - до 1.6 был дефлтным метдом			
+			** Server (C2) 
+				# Анализирует, перекомпилирует очищаяя ранее занятую память. Выполняет перекомпиляцию обратно. При этом то что было в нативном коде декомпилирует в ява байт-код
+				# Анализ деается не только на базе кода и его исполнения но и битность ОС, ядерность машины итд.
+			** TIERED (в начинаем с С1 потом работаем с С2) - для 1.8 стал дефолтным методом
+		
+		* Инлайн (на уровне байт-код[все что меньше 35байт всегда инлайнится], а здесь именно на уровен JIT)	
+		* ON-STACK REPLACMENT - то, что много раз выполняется. Подменяет часто выполняемый код по ходу выполнения на тот что уже скомпилированно.
+		* ESCAPE ANALYSE - суть - (то что мы написали, то что скомпилировалось, то что исполняет jit совершенно разные вещи)
+			# При тестировании нагрузки (нужно правильно симулирвоать нагрузку)
+				# Наши данные должны быть похожи на реальные данные
+				# Наша нагрузка должна быть похожа максимально на реальную нагрузку.
+			
+	* Тюнинг:
+		** -client, -server or -XX:+TieredCompilation
+		** -XX:ReservedCodeCacheSize= , -XX:InitalCodeCacheSice=  - в метаспейсе не heap - GC не трогает
+			# Достаточно небольшие дефолтно, лучше увеличить. Память нынче дешево, добавьте еще памяти.
+			
+		JITWATCH - анализатор во что скомпилиось в реальности.
+
+/-----------------------------------------------------------------------------/
+Под капатом интеграция между JNDI и любой конкретной службой осуществляется с помощью интерфейса поставщика услуг SPI.
+		SPI позволяет прозрачно подключать различные службы именования и каталогов, что позволяет Java-приложению использовать JNDI API для доступа к подключенным службам.
+
+		JDK включает в себя поставщиков услуг к следующим службам:
+			Lightweight Directory Access Protocol (LDAP);
+			Common Object Request Broker Architecture (CORBA);
+			Common Object Services (COS) name service;
+			Java Remote Method Invocation (RMI) Registry;
+			Domain Name Service (DNS).
+
+		Код JNDI API разделен на несколько пакетов:
+			javax.naming;
+			javax.naming.directory;
+			javax.naming.ldap;
+			javax.naming.event;
+			javax.naming.spi.
+
+JNDI - обеспечивет единобразный доступ к объекту по имени.
+		ассоциация (binding) - соответствие JNDI-имени определенному объекту;
+		контекст (context) - среда, в которой хранится набор ассоциаций между объектами и именами.
+
+InitialContext - это верхушка JNDI Tree, к которому Bind объекты. При lookup - поиск начинается с верхушки т.е. с InitialContext
+	Context namingContext = new InitialContext(); это когда работаем внутри AppServer т.е. уже все параметры заполнены, мы просто получаем InitialContext
+
+	JNDI Tree - можно относиться как к регистратуре. Соответственно запрашиваем Java объекты в регистратуре.
+	----
+
+	final Properties proprs = new Properties();
+	props.setProperty("java.naming.factory.inital", "com.sun.enterprise.naming.SerialInitContextFactory");
+	...
+	Context namingContext = new InitialContext(props);
+		Получив 
+
+	Можно объекты получаеть как через lookup, так и через DependenceInjection.
+		Injection
+			@Resource(lookup="java:/ConnectionFactory")
+			ConnectionFactory connectionFactory;
+				или
+			@Resource(lookup="queue/test")
+			Queue testQueue;
+		Lookup
+			ConnectionFactory connectionFactory = (ConnectionFactory)namingContext.lookup(ConnectionFactoryString);
+				или
+			Destination destination = (Destination) namingContext.lokup("jms/queue/test")
+
+	Когда идет работа напрямую с JNDI(т.е. вне контейнера), происходит поиск текстового файла jndi.properties в classpath. Данный файл содержит метоинформацию, какой же класс использовать для работы с jndi, свойство это такое: java.naming.factory.inital
+/-----------------------------------------------------------------------------/
+	
+JMS
+	- API - через который можно отправлять сообщения (анаогия JDBC)
+	- MOM - message oriented middleware - сервера (аналогия почтового сервера)
+	
+	1. Point-to-Point  (1 producer к 1 consumer)
+	2. Pub-Sub (1 producer к N consumer)
+	

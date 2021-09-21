@@ -1,0 +1,426 @@
+/*
+Ниже отображена структура:
+	logStash<_index>
+					\
+					 mappings
+							 \
+							  ------_default_
+							  |				  \
+							  |					dynamic_templates
+							  |					string_fields
+							  |					_all
+							  |					properties
+							  |							  
+							  ------logs
+										\
+										 dynamic_templates 	(-//-)
+										 string_fields		(-//-)
+										 _all				(-//-)
+										 properties			(отличается, собственно тут логи, поля логов)
+										 
+Получаем два типа в mapping: _default_ и logs.
+У logs соответственно поля: @timestamp, @version, host итд. Т.е. берется из поля properties.
+Правильный запрос: 
+curl -XGET 'http://localhost:9200/logstash-2017.08.09/logs/_search?q=@version:1&pretty=rtue'
+curl -XGET 'http://localhost:9200/logstash-2017.08.09/logs/_search?pretty=true' -d '{"query":{"term":{"@version":1}}}' 				- тот же что и первый
+curl -XGET 'http://localhost:9200/logstash-2017.08.09/logs/_search,_source=?pretty=true' -d '{"query":{"term":{"@version":1}}}'		- тоже но покажет только source
+curl -XGET 'http://localhost:9200/logstash-2017.08.09/logs/_count?q=*&pretty' 														- покажет количество запсей
+
+curl -XGET 'http://localhost:9200/logstash-2017.08.04/_search?pretty=true' -d '{"query":{"match_all":{}}, "size":20000, "_source" : ["@version", "@timestamp"], "sort" :{"@timestamp":{"order": "asc"}}}' -  ищем все, но отображаем только "@version", "@timestamp", и сортируем по @timestamp
+
+См. https://habrahabr.ru/post/280488/
+http://docs.mirocow.com/doku.php?id=system:elasticsearch
+*/
+
+{
+  "logstash-2017.08.08" : {
+    "aliases" : { },
+    "mappings" : {
+      "_default_" : {
+        "dynamic_templates" : [ {
+          "message_field" : {
+            "mapping" : {
+              "index" : "analyzed",
+              "omit_norms" : true,
+              "type" : "string"
+            },
+            "match" : "message",
+            "match_mapping_type" : "string"
+          }
+        }, {
+          "string_fields" : {
+            "mapping" : {
+              "index" : "analyzed",
+              "omit_norms" : true,
+              "type" : "string",
+              "fields" : {
+                "raw" : {
+                  "ignore_above" : 256,
+                  "index" : "not_analyzed",
+                  "type" : "string"
+                }
+              }
+            },
+            "match" : "*",
+            "match_mapping_type" : "string"
+          }
+        } ],
+        "_all" : {
+          "enabled" : true,
+          "omit_norms" : true
+        },
+        "properties" : {
+          "@version" : {
+            "type" : "string",
+            "index" : "not_analyzed"
+          },
+          "geoip" : {
+            "dynamic" : "true",
+            "properties" : {
+              "location" : {
+                "type" : "geo_point"
+              }
+            }
+          }
+        }
+      },
+      "logs" : {
+        "dynamic_templates" : [ {
+          "message_field" : {
+            "mapping" : {
+              "index" : "analyzed",
+              "omit_norms" : true,
+              "type" : "string"
+            },
+            "match" : "message",
+            "match_mapping_type" : "string"
+          }
+        }, {
+          "string_fields" : {
+            "mapping" : {
+              "index" : "analyzed",
+              "omit_norms" : true,
+              "type" : "string",
+              "fields" : {
+                "raw" : {
+                  "ignore_above" : 256,
+                  "index" : "not_analyzed",
+                  "type" : "string"
+                }
+              }
+            },
+            "match" : "*",
+            "match_mapping_type" : "string"
+          }
+        } ],
+        "_all" : {
+          "enabled" : true,
+          "omit_norms" : true
+        },
+        "properties" : {
+          "@timestamp" : {
+            "type" : "date",
+            "format" : "dateOptionalTime"
+          },
+          "@version" : {
+            "type" : "string",
+            "index" : "not_analyzed"
+          },
+          "exception" : {
+            "properties" : {
+			/*вложенный элементо. В кибана отображается как exception.frames и exception.message*/
+              "frames" : {
+                "properties" : {
+                  "class" : {
+                    "type" : "string",
+                    "norms" : {
+                      "enabled" : false
+                    },
+                    "fields" : {
+                      "raw" : {
+                        "type" : "string",
+                        "index" : "not_analyzed",
+                        "ignore_above" : 256
+                      }
+                    }
+                  },
+                  "line" : {
+                    "type" : "long"
+                  },
+                  "method" : {
+                    "type" : "string",
+                    "norms" : {
+                      "enabled" : false
+                    },
+                    "fields" : {
+                      "raw" : {
+                        "type" : "string",
+                        "index" : "not_analyzed",
+                        "ignore_above" : 256
+                      }
+                    }
+                  }
+                }
+              },
+              "message" : {
+                "type" : "string",
+                "norms" : {
+                  "enabled" : false
+                }
+              }
+            }
+          },
+          "geoip" : {
+            "dynamic" : "true",
+            "properties" : {
+              "location" : {
+                "type" : "geo_point"
+              }
+            }
+          },
+		  /*вложенный элемент. В кибана отображается как exception.content_type и headers.properties*/
+          "headers" : {
+            "properties" : {
+              "content_length" : {
+                "type" : "string",
+                "norms" : {
+                  "enabled" : false
+                },
+                "fields" : {
+                  "raw" : {
+                    "type" : "string",
+                    "index" : "not_analyzed",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "content_type" : {
+                "type" : "string",
+                "norms" : {
+                  "enabled" : false
+                },
+                "fields" : {
+                  "raw" : {
+                    "type" : "string",
+                    "index" : "not_analyzed",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "http_accept" : {
+                "type" : "string",
+                "norms" : {
+                  "enabled" : false
+                },
+                "fields" : {
+                  "raw" : {
+                    "type" : "string",
+                    "index" : "not_analyzed",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "http_content_encoding" : {
+                "type" : "string",
+                "norms" : {
+                  "enabled" : false
+                },
+                "fields" : {
+                  "raw" : {
+                    "type" : "string",
+                    "index" : "not_analyzed",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "http_host" : {
+                "type" : "string",
+                "norms" : {
+                  "enabled" : false
+                },
+                "fields" : {
+                  "raw" : {
+                    "type" : "string",
+                    "index" : "not_analyzed",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "http_user_agent" : {
+                "type" : "string",
+                "norms" : {
+                  "enabled" : false
+                },
+                "fields" : {
+                  "raw" : {
+                    "type" : "string",
+                    "index" : "not_analyzed",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "http_version" : {
+                "type" : "string",
+                "norms" : {
+                  "enabled" : false
+                },
+                "fields" : {
+                  "raw" : {
+                    "type" : "string",
+                    "index" : "not_analyzed",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "request_method" : {
+                "type" : "string",
+                "norms" : {
+                  "enabled" : false
+                },
+                "fields" : {
+                  "raw" : {
+                    "type" : "string",
+                    "index" : "not_analyzed",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "request_path" : {
+                "type" : "string",
+                "norms" : {
+                  "enabled" : false
+                },
+                "fields" : {
+                  "raw" : {
+                    "type" : "string",
+                    "index" : "not_analyzed",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "request_uri" : {
+                "type" : "string",
+                "norms" : {
+                  "enabled" : false
+                },
+                "fields" : {
+                  "raw" : {
+                    "type" : "string",
+                    "index" : "not_analyzed",
+                    "ignore_above" : 256
+                  }
+                }
+              }
+            }
+          },
+          "host" : {
+            "type" : "string",
+            "norms" : {
+              "enabled" : false
+            },
+            "fields" : {
+              "raw" : {
+                "type" : "string",
+                "index" : "not_analyzed",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "level" : {
+            "type" : "string",
+            "norms" : {
+              "enabled" : false
+            },
+            "fields" : {
+              "raw" : {
+                "type" : "string",
+                "index" : "not_analyzed",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "loggerClassName" : {
+            "type" : "string",
+            "norms" : {
+              "enabled" : false
+            },
+            "fields" : {
+              "raw" : {
+                "type" : "string",
+                "index" : "not_analyzed",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "loggerName" : {
+            "type" : "string",
+            "norms" : {
+              "enabled" : false
+            },
+            "fields" : {
+              "raw" : {
+                "type" : "string",
+                "index" : "not_analyzed",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "mdc" : {
+            "type" : "object"
+          },
+          "message" : {
+            "type" : "string",
+            "norms" : {
+              "enabled" : false
+            }
+          },
+          "ndc" : {
+            "type" : "string",
+            "norms" : {
+              "enabled" : false
+            },
+            "fields" : {
+              "raw" : {
+                "type" : "string",
+                "index" : "not_analyzed",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "sequence" : {
+            "type" : "long"
+          },
+          "threadId" : {
+            "type" : "long"
+          },
+          "threadName" : {
+            "type" : "string",
+            "norms" : {
+              "enabled" : false
+            },
+            "fields" : {
+              "raw" : {
+                "type" : "string",
+                "index" : "not_analyzed",
+                "ignore_above" : 256
+              }
+            }
+          }
+        }
+      }
+    },
+    "settings" : {
+      "index" : {
+        "refresh_interval" : "5s",
+        "creation_date" : "1502155020016",
+        "number_of_shards" : "5",
+        "number_of_replicas" : "0",
+        "version" : {
+          "created" : "1060299"
+        },
+        "uuid" : "W8C3KgyETmCI7Z4ZnYUtcg"
+      }
+    },
+    "warmers" : { }
+  }
+}

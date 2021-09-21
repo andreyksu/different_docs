@@ -1,0 +1,100 @@
+activity;деятельность
+already;уже
+amount;количество
+annoy;раздражать
+appear;появляться
+atom;атом
+author;автор
+biography;биография
+blind;слепой
+brain;мозг
+cancel;отменить
+cartoon;мультфильм
+catchy;броский
+character;персонаж
+cinema;кинотеатр
+circle;круг
+circus;цирк
+common;обычный
+complain;жаловаться
+compose;сочинять
+composer;композитор
+concert;концерт
+congratulate;поздравлять
+correct;исправлять
+daily routine;распорядок дня
+dictionary;словарь
+dramatic;драматический
+dream;мечта
+drummer;барабанщик
+enormous;огромный
+environment;Окружающая среда
+event;событие
+excited;взволнованный
+exotic;экзотический
+expensive;дорогой
+fall asleep;заснуть
+famous;известный
+farmhouse;фермерский дом
+field;поле
+find out;выяснить
+government;правительство
+guess;догадка
+horror;ужас
+human;человек
+important;важный
+improve;улучшать
+inspiration;вдохновение
+intrigued;заинтригованный
+invent;изобретать
+investigate;исследовать
+jealous;завистливый
+jewellery;драгоценности
+laboratory;лаборатория
+laughter;смех
+literature;литература
+lucky;счастливый
+masterpiece;шедевр
+medicine;лекарство
+melody;мелодия
+memory;Память
+mention;упоминать
+message;сообщение
+messy;неряшливый
+mistake;ошибка
+moon;Луна
+mountain;гора
+mysterious;загадочный
+mystery;загадка
+nightmare;кошмар
+novel;роман
+oil;масло
+payment;оплата
+piano;пианино
+poem;стихотворение
+poetry;поэзия
+publish;публиковать
+realize;осознавать
+refuse;отказывать
+revise;пересматривать
+scientific;научный
+scientist;ученый
+sentimental;чувствительный
+sheep;овца
+solve;решить
+step;шаг
+story;история
+stranger;незнакомец
+success;успех
+thought;мысль
+tidy up;убирать
+travel;путешествовать
+unforgettable;незабываемый
+violin;скрипка
+vocabulary;словарный запас
+wander;бродить
+weather forecast;прогноз погоды
+weird;странный
+wheel;рулевое колесо
+win;Выигрывать
+writer;писатель
