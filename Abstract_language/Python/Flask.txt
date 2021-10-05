@@ -1,0 +1,13 @@
+Flask
+
+    Редирект:
+        @app.route('/')
+        def index():
+            return redirect(url_for('login'), 301)
+
+        @app.route('/login')
+        def login():
+            abort(401)
+            
+        Или:
+            flask.redirect(location, code=302)

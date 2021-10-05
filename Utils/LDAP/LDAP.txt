@@ -1,0 +1,20 @@
+https://habr.com/ru/post/538662/
+
+1. «апись(entry) харерезуетс€ набором ключей: значений разделенных двоеточием.
+	«апись - описывает что либо.
+
+	ѕример записи:	
+		dn: sn=Ellingwood,ou=people,dc=digitalocean,dc=com
+		objectclass: person
+		sn: Ellingwood
+		cn: Justin Ellingwood
+	
+«апись так же имеет отошени€ родитель/предок, группы. Data Information Trees, или DIT-ы.
+DIT представл€ет собой организационную структуру, похожую на файловую систему, где кажда€ запись (кроме записи верхнего уровн€) имеет ровно одну родительскую запись и под ней может находитьс€ любое количество дочерних записей.
+
+dn: sn=Ellingwood,ou=people,dc=digitalocean,dc=com
+
+distinguished name ("dn", "отличительное им€")
+	—оздаем запись под названием sn=Ellingwood
+	–одителем дл€ нее €вл€етс€ ou=people
+	ј родитель лежит в digitalocean.com

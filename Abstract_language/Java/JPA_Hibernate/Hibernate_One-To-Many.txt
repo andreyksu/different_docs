@@ -1,0 +1,39 @@
+https://www.baeldung.com/hibernate-one-to-many
+
+Hibernate One to Many
+
+cart
+    cart_id (PK)
+    
+items
+    id      (PK)
+    cart_id (FK cart.cart_id)    //The way this works at the database level is we have a cart_id as a primary key in the cart table and also a cart_id as a foreign key in items.
+    
+
+@Entity
+@Table(name="CART")
+public class Cart {
+
+    //...
+
+    @OneToMany(mappedBy="cart")     //We can also add a reference to Cart in Items using @ManyToOne, making this a bidirectional relationship. 
+                                    //Bidirectional means that we are able to access items from carts, and also carts from items.
+    private Set<Items> items;
+    
+	// getters and setters
+}  
+
+
+@Entity
+@Table(name="ITEMS")
+public class Items {
+    
+    //...
+    @ManyToOne
+    @JoinColumn(name="cart_id", nullable=false)
+    private Cart cart;
+
+    public Items() {}
+    
+    // getters and setters
+}

@@ -1,0 +1,2 @@
+Перенос слов в TreeItem (как избежать перенос слов)
+	https://css-tricks.com/flexbox-truncated-text/

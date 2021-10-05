@@ -1,0 +1,63 @@
+Сценарий:
+	Проект (представляет из себя ОБЪЕКТ - в скрипте)
+	Задачи (представляет из себя ОБЪЕКТ - в скрипте)
+
+			Пример:
+				// Using a getter method
+				println project.buildDir
+				println getProject().getBuildDir()
+
+				// Using a setter method
+				project.buildDir = 'target'
+				getProject().setBuildDir('target')
+
+
+
+Файл сценарий обрабатывает несколько проектов (проект - это jar или war или zip).
+Проект состоит из нескольких задач (задача это может быть компиляция, архивировани итд итп).
+	
+	Задача аналогична цели Ant.
+
+Файл сценария build.gradle
+
+doLast можно заменть на << 
+
+
+ myName.each() { 
+      println "${it}" 
+   };
+
+
+   Hработа с проектом:
+   	// Using a getter method
+	println project.buildDir
+	println getProject().getBuildDir()
+
+	// Using a setter method
+	project.buildDir = 'target'
+	getProject().setBuildDir('target')
+
+// Такая запись, эквивалентна:
+task hello {
+   doLast {
+      println 'tutorialspoint'
+   }
+}
+
+//Такой записи:
+
+task('hello') << {
+   println "tutorialspoint"
+}
+
+//Или такой 
+tasks.create(name: 'hello') << {
+   println "tutorialspoint"
+}
+
+Имя каждой задачи это по сути свойство проекта.
+
+task hello
+
+println hello.name
+println project.hello.name

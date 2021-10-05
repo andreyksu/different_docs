@@ -1,0 +1,16 @@
+When a closure is the last parameter of a method call, like when using Groovy’s each{} iteration mechanism, you can put the closure outside the closing parentheses, and even omit the parentheses:
+
+list.each( { println it } )
+list.each(){ println it }
+list.each  { println it }
+
+
+Always prefer the third form, which is more natural, as an empty pair of parentheses is just useless syntactical noise!
+
+In some cases parentheses are required, such as when making nested method calls or when calling a method without parameters.
+
+def foo(n) { n }
+def bar() { 1 }
+
+println foo 1 // won't work
+def m = bar   // won't work

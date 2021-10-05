@@ -1,0 +1,112 @@
+Как я понял, здесь в примерах везде указана двух-сторонняя связь. А можно указывать одностороннюю связь (т.е. само поле в калссе не будет указано т.е. в классе Address убрать поле private User user).
+
+
+https://www.baeldung.com/jpa-one-to-one
+
+
+Modeling With a Foreign Key
+
+users
+    id (PK)
+    username
+    address_id (FK)//In this example, the address_id column in users is the foreign key to address.
+    
+address
+    id (PK)
+    street
+    city
+
+//Simply put, whoever owns the foreign key column gets the @JoinColumn annotation.
+@Entity
+@Table(name = "users")
+public class User {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private Long id;
+    //... 
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")   //Also, we need to place the @JoinColumn annotation to configure the name of the column in the users table that maps to the primary key in the address table. 
+                                                                    //This annotation is used only on the owner side.  Simply put, whoever(тот кто) owns the foreign key column gets the @JoinColumn annotation.
+    private Address address;
+
+    // ... getters and setters
+}
+
+//The address side of the relationship is called the non-owning side
+@Entity
+@Table(name = "address")
+public class Address {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private Long id;
+    //...
+
+    @OneToOne(mappedBy = "address") //
+    private User user;
+
+    //... getters and setters
+}
+
+------------------------------------------------------------------------------------------------------
+Modeling With a Shared Primary Key (плюс у этого подхода, что при выборке будет один select)
+
+
+users
+    id (PK)
+    username
+    
+address
+    user_id (PK/FK) //In this strategy, instead of creating a new column address_id, we'll mark the primary key column (user_id) of the address table as the foreign key to the users table:
+    street
+    city
+    
+@Entity
+@Table(name = "users")
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private Long id;
+
+    //...
+
+    //Если User не должен хранить 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL) //The mappedBy attribute is now moved to the User class since the foreign key is now present in the address table. 
+    @PrimaryKeyJoinColumn       //We've also added the @PrimaryKeyJoinColumn annotation, which indicates that the primary key of the User entity is used as the foreign key value for the associated Address entity.
+    private Address address;
+
+    //... getters and setters
+}
+
+@Entity
+@Table(name = "address")
+public class Address {
+
+    @Id         //We still have to define an @Id field in the Address class. But note that this references the user_id column, and it no longer uses the @GeneratedValue annotation.
+    @Column(name = "user_id")
+    private Long id;
+
+    //...
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId     //Also, on the field that references the User, we've added the @MapsId annotation, which indicates that the primary key values will be copied from the User entity.
+                //The @MapsId annotation tells Hibernate to use the primary key value of the User entity as the primary key value of the Address entity.
+    @JoinColumn(name = "user_id")
+    private User user;
+   
+    //... getters and setters
+    
+    
+------------------------------------------------------------------------------------------------------
+Отношение OneToOne в Hibernate и Spring (примеров применения)
+https://sysout.ru/otnoshenie-onetoone-v-hibernate/
+
+Полный пример с примерами применения.
+https://zetcode.com/hibernate/onetoone/
+https://zetcode.com/hibernate/onetomany/

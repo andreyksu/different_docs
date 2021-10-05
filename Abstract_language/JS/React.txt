@@ -1,0 +1,116 @@
+ReactDOM.render(что, куда) -> ReactDOM.render(element, document.getElementByID('xxx'))
+
+
+	где:
+		const element = (
+			<h1 className="greeting"> //Здесь по сути может быть компонент. т.е. допустим так <Welcome name="Sara" />; 
+				Hello, world!
+			</h1>
+		);
+
+	или
+						
+		const element = React.createElement(
+			'h1',
+			{className: 'greeting'},
+			'Hello, world!'
+		);
+
+	что равнозначно:
+
+		const element = {
+			type: 'h1',
+			props: {
+				className: 'greeting',
+				children: 'Hello, world!'
+			}
+		};
+
+	Или ReactElement можно вернуть из функции:
+
+		function Welcome(props) {
+			return <h1>Hello, {props.name}</h1>; // Или return React.createElement(...)
+		}
+
+		Или класс с методом render()
+
+		class Welcome extends React.Component {
+			render() {
+				return <h1>Hello, {this.props.name}</h1>; // Или return React.createElement(...)
+			}
+		}
+
+!!!		Unlike browser DOM elements, React elements are plain objects, and are cheap to create. React DOM takes care of updating the DOM to match the React elements.
+
+
+	const element = <div />; - это стандартный HTML тэг.
+	const element = <Welcome name="Sara" />; - а это пользовательское представление. 
+			- При парсинге, атрибут добавляется в props объект.
+			- При этом все что идет с заглавной буквы (см. тэг), будет интерпретированно как компонент. Все что с маленькой, будет интерпретирован как тэг.
+
+	Т.е. еще раз:
+		- Мы отрисовываем элемент, а элемент может содержать HTML тэги или другие компоненты.
+		- Так же в элемент можно вставить еще и выражение JS или переменную (вставляется в фигурные скобки). При этом в кавычки не берется.
+
+!!!		Conceptually, components are like JavaScript functions. They accept arbitrary inputs (called “props”) and return React elements describing what should appear on the screen.
+			Т.е. возвращает ReactElement.
+
+		function Welcome(props) {
+		  return <h1>Hello, {props.name}</h1>;
+		}
+
+		const element = <Welcome name="Sara" />; //Здесь видимо обернули компонент в React элемент в нотации JSX.
+		ReactDOM.render(
+		  element,
+		  document.getElementById('root')
+		);
+
+		Компонент - это метод или класс, который возвращает Element. При этом этот элемент может содержать другой Компонент.
+
+
+Updating the Rendered Element
+	- Элемент не обновляется, он является изменяемым.
+		- По этой причине, если нужно обновить что то на экране, создается еще раз элемент и еще раз отрисовывается с помощью ReactDOM.render().
+	- Вернее так:
+		ReactElement создается как объект а React сам отрисует изменения в DOM. По сути не нужно каждый раз вызывать ReactDOM.render() - вызывается один раз как main в С++. React сам следит за изменением состояния элемента. По этой причине нужно использовать class и менять его состояние (state) - а React сам будет отслеживать изменения и обновлять DOM. При этом дом будет обновлен умно (только те части что нужны).
+
+
+		function tick() {
+			const element = (
+			<div>
+				<h1>Hello, world!</h1>
+				<h2>It is {new Date().toLocaleTimeString()}.</h2>
+			</div>
+			);
+			ReactDOM.render(element, document.getElementById('root'));
+		}
+
+		setInterval(tick, 1000);
+
+		- Even though we create an element describing the whole UI tree on every tick, only the text node whose contents have changed gets updated by React DOM.
+		- In practice, most React apps only call ReactDOM.render() once. In the next sections we will learn how such code gets encapsulated into stateful components.
+
+
+		Важно!!!
+			В constructor значение state задается через присваивание.
+				this.state = {date: new Date()};
+			А вот чтобы React понял, что что-то обновилось в состоянии и нужно бы обновить DOM нужно использовать метод setState(...)
+				this.setState({
+					date: new Date()
+				});
+
+			Ну и делаем так:
+
+			//Wrong
+				this.setState({
+					counter: this.state.counter + this.props.increment,
+				});
+			//Correct
+				this.setState((state, props) => ({
+					counter: state.counter + props.increment
+				}));
+
+Adding Lifecycle Methods to a Class
+
+		- The componentDidMount() method runs after the component output has been rendered to the DOM.
+		- We will tear down the timer in the componentWillUnmount() lifecycle method.

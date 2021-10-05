@@ -1,0 +1,191 @@
+JPA
+--------------
+Справочная документация Hibernate
+http://hibernate-refdoc.3141.ru/
+http://hibernate-refdoc.3141.ru/ch3.Configuration
+
+org.hibernate.cfg.Configuration cfg = new Configuration();				
+															//Задаем файлы или классы, что являются описанием отображений SQL на JAVA код. Через него будем создавать неизменяемый SessionFactory. Конфигурация org.hibernate.cfg.Configuration содержит стартовые настройки, которые будут отброшены после создания SessionFactory. 
+															//создаем конфигурацию cfg.addResource("Item.hbm.xml").addResource("Bid.hbm.xml");
+															//cfg.addClass(org.hibernate.auction.Item.class).addClass(org.hibernate.auction.Bid.class); //Hibernate будет искать файлы отображений /org/hibernate/auction/Item.hbm.xml и /org/hibernate/auction/Bid.hbm.xml в classpath.
+
+															//Это можжно заменить на Размещение файла с именем hibernate.properties в корне classpath. 
+															//Или через передачу экземпляра java.util.Properties в Configuration.setProperties().
+															//Или Включение элементов <property> в файл hibernate.cfg.xml (он объединяет в себе содержимое standelone-fill.xml и persistance.xml)
+SessionFactory sessions = cfg.buildSessionFactory();
+															//Можно создать несколько экземпляров, если происходит подключение к разным БД,
+															
+Session session = sessions.openSession(); 					
+															//Создается соединение к JDBC. После запуска задачи, требующей доступа к базе данных, соединение JDBC будет получено из пула. Но перед этим нужно передать настройки соединения JDBC в Hibernate.
+
+
+Пример файла hibernate.properties для c3p0
+
+hibernate.connection.driver_class = org.postgresql.Driver
+hibernate.connection.url = jdbc:postgresql://localhost/mydatabase
+hibernate.connection.username = myuser
+hibernate.connection.password = secret
+hibernate.c3p0.min_size=5
+hibernate.c3p0.max_size=20
+hibernate.c3p0.timeout=1800
+hibernate.c3p0.max_statements=50
+hibernate.dialect = org.hibernate.dialect.PostgreSQL82Dialect
+
+
+ Ниже приведен пример файла hibernate.properties для сервера приложений, предоставляемого источником данных JNDI:
+
+hibernate.connection.datasource = java:/comp/env/jdbc/test 										//Соединения JDBC, полученные из источника данных JNDI, будут автоматически участвовать в транзакциях, управляемых контейнером сервера приложений.
+hibernate.transaction.factory_class = org.hibernate.transaction.JTATransactionFactory
+hibernate.transaction.manager_lookup_class = org.hibernate.transaction.JBossTransactionManagerLookup
+hibernate.dialect = org.hibernate.dialect.PostgreSQL82Dialect
+
+------------------------------------------
+Примера файла hibernate.cfg.xml (он объединяет в себе содержимое standelone-fill.xml и persistance.xml)
+
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD//EN"
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+  <session-factory>
+    <!-- Database connection settings -->
+    <property name="hibernate.connection.driver_class">oracle.jdbc.OracleDriver</property>
+    <property name="hibernate.connection.url">jdbc:oracle:thin:@localhost:1521:SE</property>
+    <property name="hibernate.connection.username">scott</property>
+    <property name="hibernate.connection.password">tiger</property>
+
+    <!-- JDBC connection pool (use the built-in) -->
+    <property name="hibernate.connection.pool_size">1</property>
+
+    <!-- Echo all executed SQL to stdout -->
+    <property name="show_sql">true</property>
+
+    <!-- SQL dialect -->
+    <property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property>
+    <property name="hibernate.current_session_context_class">thread</property>
+    <property name="hibernate.connection.CharSet">utf8</property>
+    <property name="hibernate.connection.characterEncoding">utf8</property>
+    <property name="hibernate.connection.useUnicode">true</property>
+
+    <!-- Сущность/класс User -->
+    <mapping class="net.common.model.User"/>
+
+  </session-factory>  
+</hibernate-configuration>
+
+
+------------------------------------------
+
+Использование Sequence в Hibernate
+https://java-online.ru/hibernate-sequence.xhtml
+
+Связанные сущности в Hibernate
+https://java-online.ru/hibernate-entities.xhtml
+(@OneToOne итд)
+
+
+Работа с БД в Hibernate осуществляется через объект сессии типа org.hibernate.Session, который получают из экземпляра типа org.hibernate.SessionFactory. Интерфейс org.hibernate.Session является мостом между приложением и Hibernate. С помощью сессий выполняются CRUD-операции с объектами-сущностями.
+
+--------------
+
+Аннотация @GeneratedValue:
+	Содержит два поля: стратегия и имя генгератора.
+
+	Два генератор первычного ключа:
+		@SequenceGenerator
+		@TableGenerator 
+
+	Четыре стратегии генерации первичного ключа:
+		GenerationType.TABLE
+		GenerationType.SEQUENCE
+		GenerationType.IDENTITY
+		GenerationType.AUTO
+
+
+	GenerationType.TABLE:
+		Использует таблицу в БД для хранения первичного ключа. Генерируется первичный ключ, через табличу в БД. Эта стратегия обычно используется совместно с аннотацией @TableGenerator.
+			@TableGenerator - определяет табличу, которая генерирует первичный ключ.
+
+				@Id
+				@GeneratedValue(strategy = GenerationType.TABLE, generator = "roleSeq")
+				@TableGenerator(name = "roleSeq", allocationSize = 1, table = "seq_table", pkColumnName = "seq_id", valueColumnName = "seq_count")
+				private Integer id;
+
+				а можно указать не над полем а над геттером:
+
+    			private Integer id;
+
+				@Id
+				@GeneratedValue(strategy = GenerationType.TABLE, generator = "roleSeq")
+				@TableGenerator(name = "roleSeq", allocationSize = 1, table = "seq_table", pkColumnName = "seq_id", valueColumnName = "seq_count")
+				public Integer getId() {
+					return id;
+				}
+				public void setId(Integer id) {
+					this.id = id;
+				}
+
+
+    GenerationType.SEQUENCE
+    	Рекамендуется именно этот тип.
+
+    	Использует объект последовательности для генерации онной. Используется вместе с @SequenceGenerator - задает последовательность для генерации первичного ключа.
+    	БД должна поддерживать последовательности.
+
+    			CREATE SEQUENCE serial START 1;		//как это соотносится с initialValue - если значения различные?
+    												//ну и применение в БД --- INSERT INTO distributors VALUES (nextval('serial'), 'nothing');
+
+	    	    @Id
+				@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "menuSeq")
+				@SequenceGenerator(name = "menuSeq", initialValue = 1, allocationSize = 1, sequenceName = "serial")
+				@Column(name="id", updatable=false, nullable=false)
+				private Integer id;
+
+
+				Видимо альтернативный способ:
+
+				@Id
+				@GeneratedValue(generator = "sequence-generator")
+				@GenericGenerator(
+					name = "sequence-generator",
+					strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+					parameters = {
+						@Parameter(name = "sequence_name", value = "user_sequence"),
+						@Parameter(name = "initial_value", value = "4"),
+						@Parameter(name = "increment_size", value = "1")
+					}
+				)
+				private long userId;
+
+
+	GenerationType.IDENTITY
+		Это когда БД сама вставляет значения. Допустим это может быть auto_increment в рамках БД.
+
+		    @Id
+    		@GeneratedValue(strategy = GenerationType.IDENTITY)
+    		private Integer id;
+
+    GenerationType.AUTO
+    	Стратегия генерации первичного ключа передается механизму персистентности, а механизм персистентности выбирает одну из трех стратегий генерации первичного ключа в соответствии с базой данных.
+    	Является стратегией по умолчанию.
+
+    	    @GeneratedValue(strategy = GenerationType.AUTO)
+			private Integer id;
+
+			или 
+
+			@GeneratedValue
+			private Integer id;
+
+			------
+			If we're using the default generation type, the persistence provider will determine values based on the type of the primary key attribute. This type can be numerical or UUID.
+			For numeric values, the generation is based on a sequence or table generator(т.е. это GenerationType.SEQUENCE или это GenerationType.TABLE), while UUID values will use the UUIDGenerator.
+
+				@Id
+				@GeneratedValue
+				private long studentId;		//In this case, the primary key values will be unique at the database level.
+
+				@Id
+				@GeneratedValue
+				private UUID courseId; 		//Hibernate will generate an id of the form “8dd5f315-9788-4d00-87bb-10eed9eff566” via UUIDGenerator, which was introduced in Hibernate 5.

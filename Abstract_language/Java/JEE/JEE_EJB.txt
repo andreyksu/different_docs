@@ -1,20 +1,65 @@
+Важно для JBoss или WildFly!
+
+	1. Файл beans.xml должен быть в каталоге /src/main/webapp/WEB-INF/beans.xml - он может быть пустым. Но он нужен в wildFly для работы CDI.
+
+	1. DataSource описывает по сути базу и подключение к ней (описываем в resources.xml или standelone-full.xml или ...ds.xml)
+	2. Файл persistance.xml лежит в каталоге /src/main/resource/META-INF/persistance.xml - этот файл описывает по сути настройки JPA.
+			В одной из статей сказано так "Обратите внимание, что persitence.xml лежит в WEB-INF->classes->META-INF."
+
+
+--------------------
+Stateful
+	Stateful session beans maintain state information that reflects the interaction between the bean and a particular client across methods and transactions. A stateful session bean can manage interactions between a client and other enterprise beans, or manage a workflow.
+
+	A company Web site that allows employees to view and update personal profile information could use a stateful session bean to call a variety of other beans to provide the services required by a user, after the user clicks "View my Data" on a page:
+    	Accept the login data from a JSP, and call another EJB whose job it is to validate the login data.
+    	Send confirmation of authorization to the JSP.
+    	Call a bean that accesses profile information for the authorized user.
+
+
+Stateless
+	A stateless session bean does not store session or client state information between invocations—the only state it might contain is not specific to a client, for instance, a cached database connection or a reference to another EJB. At most, a stateless session bean may store state for the duration of a method invocation. When a method completes, state information is not retained.
+
+	Any instance of a stateless session bean can serve any client—any instance is equivalent. Stateless session beans can provide better performance than stateful session beans, because each stateless session bean instance can support multiple clients, albeit(хотя) one at a time. The client of a stateless session bean can be a web service endpoint.
+
+	У Stateless есть поля, что по сути могут хранить состояние. Это обычные поля класса/экземпляра. Это возникает по причине, что инснетс не удаляется, а возвращается из pool. По этому, такой Bean не должен опираться на эти поля, а по хорошему не содержать такие поля. Только методы сервисые, а если поля, то это инжект др. бинов.
+
+
+Container
+	An EJB container is a run-time container for beans that are deployed to an application server. The container is automatically created when the application server starts up, and serves as an interface between a bean and run-time services such as:
+    	Life cycle management
+    	Code generation
+    	Security
+    	Transaction management
+    	Locking and concurrency control
+
+Optional EJB Deployment Descriptors
+	As of EJB 3.0, you are no longer required to create the EJB deployment descriptor files (such as ejb-jar.xml). - но можно использовать для исключения конфликтов (имеет больший приоритет перед аннотациями).
+
+
+--------------------
+
 EJB компонент, выполняется внутри EJB контейнера, а тот в свою очередь в EJB-сервера.
-EJB-контейнер -- это то место, где ``живет'' EJB-компонент.
+EJB-контейнер -- это то место, где ''живет'' EJB-компонент.
 	EJB-контейнер реализует для находящихся в нем компонент такие сервисы как транзакции (JTA - transaction), управление ресурсами, управление версиями компонент итд.
 		Согласно спецификации EJB-3 контейнер предоставляет службы, применимые только к сеансовым компонентам и MDB. Операция добавления компонента EJB3 в контейнер называется развертыванием (deployment). После того, как EJB-компонент благополучно развернут в контейнере, он готов к использованию приложениями.
 	Как правило, в одном EJB-контейнере живет несколько однотипных EJB-компонент. 
 
-EJB-объект - это прокси, для EJB компонент, по сути реализует интерфейс компоненты. Нужен для удаленного вызова методов EJB компоненты. 
+EJB-объект - это прокси, для EJB компонент, по сути реализует интерфейс компоненты. Нужен для удаленного вызова методов EJB компоненты.
 	EJB-объект - создается без участия разработчика (внутренние механизмы).
+
+		First, the client actually calls a local proxy stub for the remote method. The stub marshalls any parameter data, and then calls a remote skeleton on the server. The skeleton unmarshalls the data, and upcalls to the bean container. 
+		The container then delegates the method call to the bean. The bean method executes. When it returns, the thread of control returns to the bean container, which interposes whatever services are required by the context. For example, if the method is running in a transaction context, the bean container performs a commit operation, if possible, depending on the transaction attributes in the bean descriptor. 
+
 	
 Компонент = бин.
-	EJB — это обычный Java класс, отмеченный одной из специальных аннотаций. Такие классы называют бинами. Такие классы называют бинами. В зависимости от того, какой аннотацией отмечен класс, он будет являться представителем того или иного типа EJB (бинов).
+	EJB — это обычный Java класс, отмеченный одной из специальных аннотаций. Такие классы называют бинами. В зависимости от того, какой аннотацией отмечен класс, он будет являться представителем того или иного типа EJB (бинов).
 
 
 Session Beans:
 	Session beans are used to build the business logic.
 		- Доступ можно получить через dependency injection or JNDI.
-		- Для сервлетов доступно через CDI. Т.е. используя @EJB
+		- Для сервлетов бины доступны через CDI. Т.е. используя @EJB
 	
 
 	StateFull бин нельзя использовать в Servlet(into classes that are multi-threaded in nature, such as servlets and JSF managed beans) - так как инстанс сервлета будет шариться между всеми клиентами.
@@ -76,7 +121,7 @@ Message-Driven Beans
 						Такие бины чаще всего выступают в роли слушателей JMS (Java Message Service) сообщений и служат для организации асинхронного обмена сообщениями между частями системы.
 
 ---------------
-Клиент работает с Session Bean, а seesion bean в свою очередь может использовать др. session bean и как правило обрабатывает/работает с Entity. Как правило обработка с Entity выполняется посредством EntityManager. Который через конфигурацинный файл ...ds.xml и persistance.xml связывается с определнной БД - др. словами с DataSource.
+Клиент работает с Session Bean, а seesion bean в свою очередь может использовать др. session bean и как правило обрабатывает/работает с Entity. Как правило обработка с Entity выполняется посредством EntityManager. Который через конфигурацинный файл ...ds.xml и/или persistance.xml связывается с определнной БД - др. словами с DataSource.
 
 EntityManager API manages the lifecycle of entities.
 	The EntityManager figures out how to persist the domain by looking at the ORM configuration, it performs the CRUD.
@@ -109,61 +154,69 @@ EntityManager API manages the lifecycle of entities.
 		Сначало просто создаем как обычный объект - какую-то сущность, наполняем ее, после чего вызываем persist - что означает создать новую запись в таблице (не обновить, а создать). Если Id вдруг совпадает, то будет выбрашен PersistenceException.
 
 
----------------
+/-----------------------------------------------------------------------------/
 
-JNDI
+JTA
 
-	https://docs.jboss.org/jbossas/jboss4guide/r1/html/ch3.chapter.html
+JPA живет в рамках JTA.
+	Т.е. транзацкии JPA живет в рамках транзацкции JTA (т.е. управляется через JTA. JTA - это API для управлениями транзакциями).
 
-	Разделяют два вида имён:
-		composite 	- составной
-		compound	- сложный
-
-	Это пример composite имени, который состоит из двух compound имен:
-		ahost.someorg.org:/tmp/remotefile.txt
-
-	Два compound
-		ahost.someorg.org и /tmp/remotefile.txt
-
-	A file pathname in the UNIX file system is an example of a compound name.
-		Each component in a compound name is an atomic name.
-
-		If the component comes from a hierarchical namespace, that component can be further parsed into its atomic parts by using the javax.naming.CompoundName class. The JNDI API provides the javax.naming.CompositeName class as the implementation of the Name interface for composite names.
-
-
-	Contex
-		All naming service operations are performed on some implementation of the Context interface. The javax.naming.IntialContext class implements the Context interface, and provides the starting point for interacting with a naming service.
-
-		The javax.naming.Context interface is the primary interface for interacting with a naming service.
-			The Context interface represents a set of name-to-object bindings.
-			Every context has an associated naming convention that determines how the context parses string names into javax.naming.Name instances.
-
-		The Context implementation used internally by the InitialContext class is determined at runtime.
-			The default policy uses the environment property java.naming.factory.initial, which contains the class name of the javax.naming.spi.InitialContextFactory implementation. You obtain the name of the InitialContextFactory class from the naming service provider you are using.
-
-			### JBossNS properties
-			java.naming.factory.initial=org.jnp.interfaces.NamingContextFactory
-			java.naming.provider.url=jnp://localhost:1099
-			java.naming.factory.url.pkgs=org.jboss.naming:org.jnp.interfaces
-
-
-		An example of where the restricting a binding to the java: context is useful would be a javax.sql.DataSource connection factory that can only be used inside of the JBoss server where the associated database pool resides. On the other hand, an EJB home interface would be boung to a globally visible name that should accessible by remote client.
-
-		Context iniCtx = new InitialContext();
-		Context compEnv = (Context) iniCtx.lookup("java:comp/env");
-		Доступен только для одного компонента. И не доступен для др. компонента. Т.е. не виден между компонентами. Если мы это объявили в EJB-Bean-1 то EJB-Bean-2 не будет достуно это пространство и наоборот.
-
-		There are three commonly used levels of naming scope in JBoss: names under java:comp, names under java:, and any other name. As discussed, the java:comp context and its subcontexts are only available to the application component associated with that particular context.
-
-
-По хорошему JPA живет в рамках JTA.
-	Т.е. транзацкии JPA живет в рамках транзацкции JTA (т.е. управляется через JTA).
 	Бины могут быть двух видов: 
 		- Container-Managed Transactions (By default, if no transaction demarcation is specified, enterprise beans use container-managed transaction demarcation.)
 				- Typically, the container begins a transaction immediately before an enterprise bean method starts and commits the transaction just before the method exits. Each method can be associated with a single transaction. Nested or multiple transactions are not allowed within a method.
 		- Bean-Managed Transactions
-	При этом есть еще отдельная стратегия, когда один метод EJB вызывает метод др. EJB. В зависимости от стратегии, при таком вызове будте создана новая транзация, или использоваться.
 
+	
+	Enterprise Java Beans use JTA 1.0.1 for managing transactions through either bean-managed or container-managed transactions.
+    	- Bean-managed transactions are programmatically demarcated within your bean implementation. The transaction boundaries are completely controlled by the application.
+    		For Bean-managed transaction:
+				To demarcate a JTA transaction, you invoke the begin, commit, and rollback methods of the javax.transaction.UserTransaction interface.
+
+    	- Container-managed transactions are controlled by the container. That is, the container either joins an existing transaction or starts a new transaction for the application—as defined within the deployment descriptor—and ends the newly created transaction when the bean method completes. It is not necessary for your implementation to provide code for managing the transaction.
+
+		
+		JTA, or the Java Transaction API, allows you to demarcate transactions in a manner (в том роде) that is independent of the transaction manager implementation. GlassFish Server implements the transaction manager with the Java Transaction Service (JTS). However, your code doesn’t call the JTS methods directly but instead invokes the JTA methods, which then call the lower-level JTS routines.
+    	A JTA transaction is controlled by the Java EE transaction manager.
+    	However, the Java EE transaction manager does have one limitation: It does not support nested transactions. In other words, it cannot start a transaction for an instance until the preceding transaction has ended.
+
+    	
+---------
+    	Guide to Jakarta EE JTA
+		https://www.baeldung.com/jee-jta
+
+
+    	Java Transaction API, more commonly known as JTA, is an API for managing transactions in Java. It allows us to start, commit and rollback transactions in a resource-agnostic(независимый от ресурсов) way.
+		The true power of JTA lies in its ability to manage multiple resources (i.e. databases, messaging services) in a single transaction.
+
+		JTA provides an abstraction over transaction control (begin, commit and rollback) to business code.
+		In the absence(отсутствие/недостаток) of this abstraction, we'd have to deal with the individual APIs of each resource type.
+
+		For example, we need to deal with JDBC resource like this. Likewise(также/подобно), a JMS resource may have a similar but incompatible model.
+		With JTA, we can manage multiple resources of different types in a consistent and coordinated manner.
+		As an API, JTA defines interfaces and semantics to be implemented by transaction managers. Implementations are provided by libraries such as Narayana and Bitronix.
+
+---------
+		Вот тут все хорошо описано!!!
+		https://docs.oracle.com/javaee/6/tutorial/doc/bncij.html
+		https://docs.oracle.com/javaee/6/tutorial/doc/bnciy.html#bnciz
+
+
+		Managing Transactions with EJB
+		https://www.developer.com/java/data/managing-transactions-with-ejb/
+
+		The infrastructural support for managing transactions is one of the major services provided by the EJB container.
+
+		Transaction refers to a group activity either performed as a unit or not at all. Because the individual activities are so crucial(ключевой/важный) and related that they must be accomplished as a whole; otherwise, it may lead to a “sorry” situation.
+
+		The guidelines to maintaining the sanity of transaction processing is given by the ACID (atomicity, consistency, isolation, durability) properties.
+
+		EJB transaction is built on the JTA model. The transactional context is typically provided by the session bean and application clients. Transactional services are performed within this context. The services are like creating, updating, retrieving, and deleting entities; invoking Web Services; executing JDBC operations; and so on. A transaction manager is provided by the EJB container, yet the real power lies in the declarative services in the form of metadata provided by the EJB. This declarative metadata provides the opportunity to participate actively in the transaction process. Programmers can manipulate the transaction process by using these metadata tags instead of reinventing complicated program logic.
+
+---------
+		Understanding JTA - The Java Transaction API
+		https://www.progress.com/tutorials/jdbc/understanding-jta
+
+			Не читал, но похоже полезное есть!
 
 
 ---------------------------------------
@@ -237,3 +290,11 @@ public class MyBean {
 
 
 In the messaging world, messages are not sent directly to other applications. Instead, messages are sent to destinations, known as queues or topics.
+/-----------------------------------------------------------------------------/
+
+JMS
+	- API - через который можно отправлять сообщения (анаогия JDBC)
+	- MOM - message oriented middleware - сервера (аналогия почтового сервера)
+	
+	1. Point-to-Point  (1 producer к 1 consumer)
+	2. Pub-Sub (1 producer к N consumer)

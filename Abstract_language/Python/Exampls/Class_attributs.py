@@ -2,7 +2,7 @@
 class MyClass:
     fistAttr = 11 # Атрибут класса(в терминалогии Java - static)
     secondAttr = 22 # Атрибут класса(в терминалогии Java - static)
-    def function1(self):    
+    def function1(self):
         #print(fistAttr) - так нельзя, говорит о неизвестности данного атрибута.
         print("MyClass.fistAttr = {}".format(MyClass.fistAttr))
         print("MyClass.secondAttr = {}".format(MyClass.secondAttr))

@@ -1,0 +1,28 @@
+Rudux 
+
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./components/App";
+import { Provider } from "react-redux";
+import configureStore from "./redux/stores/main";
+import * as serviceWorker from "./serviceWorker";
+import { createMuiTheme } from "@material-ui/core";
+import myTheme from "./styling/mainTheme";
+import { ThemeProvider } from "@material-ui/styles";
+
+const theme = createMuiTheme({
+  typography: {
+    fontFamily: ["Arial"].join(",")
+  }
+});
+
+ReactDOM.render(
+  <ThemeProvider theme={theme}>
+    <Provider store={configureStore()}>
+      <App />
+    </Provider>
+  </ThemeProvider>,
+  document.getElementById("root")
+);
+
+serviceWorker.unregister();

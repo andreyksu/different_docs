@@ -1,0 +1,94 @@
+Настройка Proxy
+
+        Proxy proxy = new Proxy();
+        proxy.setHttpProxy("127.0.0.1:8080");
+        proxy.setSslProxy("127.0.0.1:8080");
+
+        /*
+        FirefoxProfile profile = new FirefoxProfile();
+        profile.setAcceptUntrustedCertificates(true);
+
+        FirefoxOptions options = new FirefoxOptions();
+        options.setCapability(CapabilityType.PROXY, proxy);
+        options.setProfile(profile);
+
+        FirefoxDriver driver = new FirefoxDriver(options);
+        */
+		
+		/*
+			//It create firefox profile
+			FirefoxProfile profile=new FirefoxProfile();
+			 
+			// This will set the true value
+			profile.setAcceptUntrustedCertificates(true);
+			 
+			// This will open  firefox browser using above created profile
+			WebDriver driver=new FirefoxDriver(profile);
+		
+		
+			 // Create object of DesiredCapabilities class
+			DesiredCapabilities cap=DesiredCapabilities.chrome();
+			 
+			// Set ACCEPT_SSL_CERTS  variable to true
+			cap.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+			 
+			// Set the driver path
+			System.setProperty("webdriver.chrome.driver","Chrome driver path");
+			 
+			// Open browser with capability
+			WebDriver driver=new ChromeDriver(cap);
+		*/
+
+        /**/
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--ignore-certificate-errors");
+
+        options.setCapability(CapabilityType.PROXY, proxy);
+
+        ChromeDriver driver = new ChromeDriver(options);
+        /**/
+        driver.manage().window().setPosition(new Point(0, 0));
+        driver.manage().window().setSize(new Dimension(1920 / 2, 1200));
+
+        driver.get("https://nytimes.com");
+
+
+Работа с профилем
+		
+	Была уже такая тема в этой вертке, еще раз повторюсь
+	firefox:
+	Untrusted certificate
+	1. Устанавливаем дополнение в firefox «profile manager». Запускаем дополнение.
+	Создаем новый профиль «test», выбираем отделную папку для этого модуля (c:\profile). Запускаем firefox под этим профилем.
+	2. Вводим URL сайта с untrusted certificate. Принимаем сертификат, выходим закрываем браузер.
+	3. Открываем папку с профилем. Удаляем все файлы кроме cert8.db , cert_override.txt.
+	4. Прописываем в параметрах запуска selenium сервера -firefoxProfileTemplate C:\profile
+	(получается
+	@c:
+	@cd c:\selenium
+	@java -jar selenium-server.jar -firefoxProfileTemplate C:\selenium\profile
+	Теперь selenium будет запускать firefox с указанным профилем
+	IE7 (на восьмом не смотрел)
+	[codebox]public void IE_cert()
+	{
+	if ("*iexplore"==test_browser)
+	{
+	if(true==s.isElementPresent("//a[@id='overridelink'] ")) // где "//a[@id='overridelink'] " - xpath кнопки "продолжить просмор веб узла" в IE
+	{
+	s.click("//a[@id='overridelink']");
+	s.waitForPageToLoad(timeout);
+	}
+	}
+	}[/codebox]
+
+	Для Оперы решение проблемы с сертификатом я так и не нашел 
+	
+How to Handle SSL Certificate in Selenium WebDriver 
+		https://www.guru99.com/ssl-certificate-error-handling-selenium.html
+	
+	
+Send Email
+	https://learn-automation.com/send-report-through-email-in-selenium-webdriver/
+	
+По Selenium
+	https://www.tutorialspoint.com/answers/debomita_bhattacharjee

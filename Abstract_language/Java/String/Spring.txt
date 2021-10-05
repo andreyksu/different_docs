@@ -1,0 +1,460 @@
+Sprint
+
+    Если вы хотите создать Spring web-приложение, просто добавьте зависимость spring-boot-starter-web, которая подтянет в проект все библиотеки, необходимые для разработки Spring MVC-приложений, таких как spring-webmvc, jackson-json, validation-api и Tomcat
+    
+    После выбора подходящего starter-пакета, Spring Boot попытается автоматически настроить Spring-приложение на основе добавленных вами jar-зависимостей
+        Например, если вы добавите Spring-boot-starter-web, Spring Boot автоматически сконфигурирует такие зарегистрированные бины, как DispatcherServlet, ResourceHandlers, MessageSource
+        Если вы используете spring-boot-starter-jdbc, Spring Boot автоматически регистрирует бины DataSource, EntityManagerFactory, TransactionManager и считывает информацию для подключения к базе данных из файла application.properties.
+        
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.1.RELEASE</version>
+    </parent>
+        
+    Т.к. мы создаем REST API, то необходимо в качестве зависимости использовать spring-boot-starter-web, которая неявно определяет все остальные зависимости, такие как spring-core, spring-web, spring-webmvc, servlet api, и библиотеку jackson-databind
+    
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    
+Создание основного класса приложения:
+    Этот последний шаг заключается в создании класса конфигурации и запуска приложения. Spring Boot поддерживает новую аннотацию @SpringBootApplication, которая эквивалентна использованию @Configuration, @EnableAutoConfiguration и @ComponentScan с их атрибутами по умолчанию
+    
+    Нужно создать класс, аннотированный с помощью @SpringBootApplication, а Spring Boot включит автоматическую настройку и отсканирует ваши ресурсы в текущем пакете.    
+    
+    
+--------------------------------------------------------
+https://www.baeldung.com/spring-application-context
+The Spring ApplicationContext
+
+As we know, the primary job of the ApplicationContext is to manage beans.
+As such, an application must provide the bean configuration to the ApplicationContext container. A Spring bean configuration consists of one or more bean definitions. In addition, Spring supports different ways of configuring beans.
+--------------------------------------------------------
+
+
+    The Main class has the @SpringBootApplication annotation
+    It simply invokes the SpringApplication.run method. This starts the Spring application as a standalone application, runs the embedded servers and loads the beans.
+    Normally, such a main class is placed in a root package above other packages. This enables component scanning to scan all the sub-packages for beans.
+    For a complete working example of a simple Spring Boot application you can refer to this article.
+ 
+    @EnableAutoConfiguration – This enables Spring Boot’s autoconfiguration mechanism. Auto-configuration refers to creating beans automatically by scanning the classpath.
+
+    @ComponentScan – Typically, in a Spring application, annotations like @Component, @Configuration, @Service, @Repository are specified on classes to mark them as Spring beans. The @ComponentScan annotation basically tells Spring Boot to scan the current package and its sub-packages in order to identify annotated classes and configure them as Spring beans. Thus, it designates the current package as the root package for component scanning.
+
+    @Configuration – Designates the class as a configuration class for Java configuration. In addition to beans configured via component scanning, an application may desire to configure some additional beans via the @Bean annotation as demonstrated here. Thus, the return value of methods having the @Bean annotation in this class are registered as beans.
+    
+    
+    You just need to tell SpringBoot the type of application you are developing. SpringBoot then adds the necessary jar files and does the application configuration assuming some defaults. These default values can easily be changed by the developer. For example, if you are developing a database application, you just need to specify this to SpringBoot in the configuration file. SpringBoot then downloads all the necessary jar files like the database drivers, etc and adds them to the classpath. It also configures some beans required for the application that you are developing assuming certain defaults
+    
+    Based on the dependencies in the classpath, SpringBoot tries to configure your application by providing suitable defaults. This is known as auto-configuration. So suppose you are building a web application and add the starter for it to the Maven pom file. SpringBoot automatically configures the DispatcherServlet, ViewResolver, etc. Or if you have added the spring-data-jpa-starter, SpringBoot will automatically configure the necessary beans like the TransactionManager, EntityManager, etc
+    
+----------------------------------------------
+@Configuration - аннотация для касса, что содержит методы с аннотацией  @Bean (а методы помеченные этой аннотацией по сути возвращают )
+
+Пример без Spring boot:
+
+    <dependencies>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>5.2.2.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>5.2.2.RELEASE</version>
+    </dependency>
+  </dependencies>
+  
+  
+public class MessageDAO {  
+  public String getMessage() {
+    return "Hello World";
+  }
+}
+
+public class MessageService {
+  
+  private MessageDAO messageDAO;
+  public void printMessage() {
+    String message = messageDAO.getMessage();
+    System.out.println(message);
+  }
+  public MessageDAO getMessageDAO() {
+    return messageDAO;
+  }
+  public void setMessageDAO(MessageDAO messageDAO) {
+    this.messageDAO = messageDAO;
+  }
+}
+
+
+@Configuration
+public class MyConfiguration {
+  @Bean
+  public MessageDAO messageDAO() {
+    MessageDAO bean = new MessageDAO();
+    return bean;
+  }
+  @Bean
+  public MessageService messageService() {
+    MessageService bean = new MessageService();
+    bean.setMessageDAO(messageDAO());
+    return bean;
+  }
+}
+
+public static void main(String args[]) {
+   AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(MyConfiguration.class);
+   MessageService messageService = applicationContext.getBean("messageService", MessageService.class);    
+   messageService.printMessage();
+}
+
+----------------------------------------------------------------------
+Spring Boot Annotations
+https://www.baeldung.com/spring-boot-annotations
+----------------------------------------------------------------------
+Defining JPA Entities
+https://www.baeldung.com/jpa-entities
+----------------------------------------------------------------------
+Hibernate: save, persist, update, merge, saveOrUpdate
+https://www.baeldung.com/hibernate-save-persist-update-merge-saveorupdate
+----------------------------------------------------------------------
+Spring Component Scanning
+https://www.baeldung.com/spring-component-scanning
+----------------------------------------------------------------------
+Hibernate Entity Lifecycle
+https://www.baeldung.com/hibernate-entity-lifecycle   (Хорошая статья!)
+State of Entity
+  transient, managed, detached, deleted
+
+
+Simply put, the persistence context sits between client code and data store. It's a staging area where persistent data is converted to entities, ready to be read and altered by client code. It keeps track of all loaded data, tracks changes of that data, and is responsible to eventually synchronize any changes back to the database at the end of the business transaction.
+JPA EntityManager and Hibernate's Session are an implementation of the persistence context concept.
+
+
+A managed entity is a representation of a database table row (although that row doesn't have to exist in the database yet).
+This is managed by the currently running Session, and every change made on it will be tracked and propagated to the database automatically.
+The Session either loads the entity from the database or re-attaches a detached entity.
+
+
+First, we need to start our unit of work by obtaining a Session:
+
+  Session session = sessionFactory.openSession();
+
+In a server environment, we may inject a Session to our code via a context-aware proxy. The principle remains the same: we need a Session to encapsulate the business transaction of our unit of work.
+Next, we'll instruct our Session to load the data from the persistent store:
+
+  assertThat(getManagedEntities(session)).isEmpty();
+  List<FootballPlayer> players = s.createQuery("from FootballPlayer").getResultList();
+  assertThat(getManagedEntities(session)).size().isEqualTo(3);
+
+When we first obtain a Session, its persistent context store is empty, as shown by our first assert statement.
+Next, we're executing a query which retrieves data from the database, creates entity representation of the data, and finally returns the entity for us to use.
+Internally, the Session keeps track of all entities it loads in the persistent context store. In our case, the Session's internal store will contain 3 entities after the query.
+
+Now let's change Gigi's name:
+
+    Transaction transaction = session.getTransaction();
+    transaction.begin();
+
+    FootballPlayer gigiBuffon = players.stream()
+      .filter(p -> p.getId() == 3)
+      .findFirst()
+      .get();
+
+    gigiBuffon.setName("Gianluigi Buffon");
+    transaction.commit();
+
+    assertThat(getDirtyEntities()).size().isEqualTo(1);
+    assertThat(getDirtyEntities().get(0).getName()).isEqualTo("Gianluigi Buffon");
+
+On call to transaction commit() or flush(), the Session will find any dirty entities from its tracking list and synchronize the state to the database.
+Notice that we didn't need to call any method to notify Session that we changed something in our entity – since it's a managed entity, all changes are propagated to the database automatically.
+A managed entity is always a persistent entity – it must have a database identifier, even though the database row representation is not yet created i.e. the INSERT statement is pending the end of the unit of work.
+
+A detached entity is just an ordinary entity POJO whose identity value corresponds to a database row. The difference from a managed entity is that it's not tracked anymore by any persistence context.
+An entity can become detached when the Session used to load it was closed, or when we call Session.evict(entity) or Session.clear().
+
+
+Session.merge(entity)/Session.update(entity) can (re)attach a session:
+
+    FootballPlayer messi = session.get(FootballPlayer.class, 2L);
+
+    session.evict(messi);
+    messi.setName("Leo Messi");
+    transaction.commit();
+
+    assertThat(getDirtyEntities()).isEmpty();
+
+    transaction = startTransaction(session);
+    session.update(messi);
+    transaction.commit();
+
+    assertThat(getDirtyEntities()).size().isEqualTo(1);
+    assertThat(getDirtyEntities().get(0).getName()).isEqualTo("Leo Messi");
+
+
+----------------------------------------------------------------------
+How JPA Works
+The application that wants to use JPA needs to provide a simple class (POJO) corresponding to each database table. The class should have instance fields corresponding to the database columns. In addition, it needs to provide configuration information (information about the database URL, user name, password, etc.) and mapping information (information that specifies how to map each class to the corresponding database table). It then needs to write code that uses JPA calls. JPA uses the mapping and configuration information to translate the JPA calls to SQL statements.
+
+
+------------------------------------------
+Hibernate interfaces explained
+https://learnjava.co.in/hibernate-interfaces-explained/
+
+public class Main {
+ 
+    public static void main(String[] args) {
+         
+        Person person = new Person("Mickey Mouse",35); //This corresponds to a table called Person with name and age fields
+ 
+        SessionFactory  sessionFactory = new Configuration().configure().buildSessionFactory();
+        Session session = sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
+        session.save(person);
+        tx.commit();
+        session.close();
+        sessionFactory.close();
+                 
+    }
+ 
+}
+
+Configuration
+The Configuration object is the first Hibernate object that you will need to create in any Hibernate application. It encapsulates the Hibernate configuration file i.e. hibernate.cfg.xml. A typical Hibernate application usually creates a Configuration object only once during application initialization. The  configuration.configure method reads the hibernate.cfg.xml file and sets up the Configuration object using the properties in this file. The Configuration object is required to create the SessionFactory object.
+
+SessionFactory
+The SessionFactorycontains all the data in the hibernate configuration file. The code creates a SessionFactory using a Configuration object. The configuration.buildSessionFactory method sets up the SessionFactory object with the configuration data in the config file. A typical Hibernate application create the SessionFactory object only once at the start of the application and keeps it for later use. The SessionFactory corresponds to the database config file, so if your application connects to several databases with different config files, you will need to have separate SessionFactory objects corresponding to each database.
+
+Session
+Next, the code creates a sessionobject. The code uses the sessionFactory.openSession method to create a Session object.  The session represents the physical connection with the database, so whenever a session is created, internally a connection is established to the database. The code uses the session object to actually save data and retrieve data from the database.
+
+Transaction
+Next, the code creates a transaction. As you might be aware, in database terminology, a transaction represents a unit of work. So if you want to execute several database operations as a single unit, you can club them into a transaction. A transaction ensures that either all the operations will be executed. If one operation fails the entire transaction will fail. So the database will be reverted to the state that it was before the transaction began. Hibernate defines the transaction interface to represent a transaction.  A transaction is associated with a Session and is usually instantiated by a call to session.beginTransaction(). This gives an instance of the Transaction object. The code can then use the transaction object for committing the changes to the database.
+
+
+------------------------------------------
+How Hibernate SessionFactory works
+
+https://learnjava.co.in/how-hibernate-sessionfactory-works/
+
+Consider the following code that demonstrates a typical Hibernate application:
+
+SessionFactory  sessionFactory = new Configuration().configure().buildSessionFactory();
+Session session = sessionFactory.openSession();
+Transaction tx = session.beginTransaction();
+session.save(person);
+tx.commit();
+session.close();
+sessionFactory.close();
+
+
+This code first creates a  SessionFactory object.  The sessionFactory contains all the data in the hibernate configuration file. The code uses the Configuration class to create the SessionFactory instance.
+The configuration.configure method reads the hibernate.cfg.xml file and sets up the Configuation object using the properties in this file.
+The buildSessionFactory method builds the sessionFactory object using this configuration data.
+The SessionFactory object is usually created only once at the start of the application and kept for later use.
+The SessionFactory corresponds to the database config file. So you will need different SessionFactory instances if your application connects to different databases.
+You can then use the SessionFactory instance to obtain a Session and interact with the database
+
+
+------------------------------------------
+Hibernate HQL Syntax with code examples
+https://learnjava.co.in/hibernate-hql-syntax/
+
+------------------------------------------
+Hibernate Caching Mechanisms Explained
+https://learnjava.co.in/hibernate-caching-explained/
+
+------------------------------------------
+Hibernate Association Mappings
+https://learnjava.co.in/hibernate-association-mappings/
+
+------------------------------------------
+How to create a standalone JPA application
+https://learnjava.co.in/how-to-create-a-standalone-jpa-application/
+
+
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+    <persistence-unit name="PERSISTENCE">
+        <description>JPA Demo</description>
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLInnoDBDialect"/>
+            <property name="javax.persistence.jdbc.driver"
+                      value="com.mysql.jdbc.Driver"/>
+            <property name="javax.persistence.jdbc.url"
+                      value="jdbc:mysql://localhost/jpademo"/>
+            <property name="javax.persistence.jdbc.user" value="user"/>
+            <property name="javax.persistence.jdbc.password" value="password"/>
+        </properties>
+    </persistence-unit>
+</persistence>
+
+The persistence.xml file specifies a persistence unit. A persistence unit encapsulates database details. So, it includes the JPA Provider, mapping information & database configuration details. The persistence.xml file above specifies a persistence unit PERSISTENCE. It specifies Hibernate as the persistence provider and includes various other database connection details.  JPA uses the information in the persistence unit to configure the database connection. If your application uses multiple databases, you need to create a separate persistence unit corresponding to each database.
+
+
+@Entity
+public class Fruit {
+ @Id
+ @GeneratedValue(strategy = GenerationType.IDENTITY)
+ private int id;
+ private String name;
+ private String colour;
+ private int calories;
+ //getters and setters
+}
+
+public class JPATest {
+  @Test
+  public void testSave() {
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory("PERSISTENCE");
+    EntityManager em = emf.createEntityManager();
+    em.getTransaction().begin();
+    Fruit apple = new Fruit();
+    apple.setName("apple");
+    apple.setColour("red");
+    apple.setCalories(5);
+    em.persist(apple);
+    em.getTransaction().commit();
+    System.out.println("Fruit record saved successfully");
+    em.close();
+    emf.close();
+  }
+  
+  @Test
+  public void testQuery() {
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory("PERSISTENCE");
+    EntityManager em = emf.createEntityManager();
+    TypedQuery<Fruit> query = em.createQuery("from Fruit",Fruit.class);
+    List<Fruit> fruits = query.getResultList();
+    System.out.println("Fruit table has "+fruits.size()+" records");
+  }
+}
+
+
+
+EntityManagerFactory
+EntityManagerFactory is an in-built JPA interface. It can be created via the Persistence class by specifying the name of the persistence unit from the persistence.xml file. The code above creates an EntityManagerFactory emf by referring to the PERSISTENCE persistence unit. An EntityManagerFactory is specific to a database. So, if you’d like to connect to a different database, you need to create a different EntityManagerFactory instance. An EntityManagerFactory can be used to created EntityManager instances.
+
+EntityManager
+EntityManager is also an in-built JPA interface. It can be created via an EntityManagerFactory instance. The code above creates an EntityManager instance em via the EntityManagerFactory instance emf.  An EntityManager represents a database connection.  You can use it to perform database operations like insert/update/delete or to query a table. The code above invokes the persist method to save a Fruit record into the Fruit table.
+
+EntityTransaction
+EntityTransaction is also an in-built JPA interface. It can be created via an EntityManager.  The code above creates an EntityTransaction instance et via the EntityManager instance em.  An EntityTransaction encapsulates a database transaction. A call to the begin method starts the transaction and a call to commit saves the changes in the database.
+
+Query
+Query is also an in-built JPA interface. It can be created via an EntityManager.  The code above creates a TypedQuery (which is a sub-interface of Query) instance query via the EntityManager instance em.  You can use Query to execute a database query. The code above uses query to obtain all the Fruit records. The Query interface has methods that to retrieve the query execution results. The code above uses the query.getResultList. This returns a List of Fruit objects.
+----------------------------------------------------------------------
+https://allaroundjava.com/setting-up-java-application-with-hibernate-example/
+
+A file called persistence.xml is the main Hibernate configuration point. It’s placed under META-INF folder by default. It should contain at least one, uniquely named persistence unit. Each persistence unit has to contain a data source and a set of persistent classes in tags.
+
+
+EntityManager is a JPA interface representing a database communication. It’s created out of EntityManagerFactory, which is bound to persistence context.
+EntityManagerFactory is very expensive to create. It carries information about persistent classes, CRUD queries for all tables in the persistence context and more.
+Operations which modify data need to happen in the context of transaction, as they have to be reversible. Calling persist() on EntityManager marks the object as a candidate to be stored in the database and assigns the id property. Committing a transaction causes EntityManager to be flushed and sends an insert query to the database.
+
+Then, for the EntityManager... since your are not in a EE environment, you must get an instance of it from the EntityManagerFactoty.
+
+public Long persist(Car car) {
+    EntityManager EntityManager = EntityManagerFactory.createEntityManager();
+    EntityTransaction transaction = EntityManager.getTransaction();
+    transaction.begin();
+
+    EntityManager.persist(car);
+
+    transaction.commit();
+    EntityManager.close();
+
+    return car.getId();
+}
+
+----------------------------------------------------------------------
+https://howtodoinjava.com/hibernate/hibernate-hello-world-application/
+Можно посмотреть, здесь описано тоже приложение на Hibernate без EE.
+
+https://www.tutorialspoint.com/hibernate/hibernate_examples.htm
+Тоже полезно посмотреть.
+----------------------------------------------------------------------
+Configuring Hibernate JPA with Spring – tutorial
+https://allaroundjava.com/hibernate-jpa-spring-tutorial/
+
+
+Persistence Context is always associated with an EntityManager, for which it looks after all entities in persistent state. It stores information about any modifications to persistent objects which need to be populated to a database. Whenever you fetch an entity from the database, it’s stored in the Persistence Context. When fetching the same entity again, the EntityManager, rather than launching a SELECT query, reaches out to Persistence Context to see if this entity is already there. This way the Persistence Context acts as Hibernate’s first level cache. Whenever a persistent entity is modified, it’s marked dirty in Persistence Context. Then once Persistence Context is flushed, UPDATE statements are sent to the database for all the dirty entities.
+
+Java Transaction API (JTA)
+
+
+
+----------------------------------------------------------------------
+
+https://learnjava.co.in/how-to-create-helloworld-spring-mvc-web-application-using-maven-and-eclipse/
+How to create HelloWorld Spring MVC Web application using Maven and Eclipse
+
+https://learnjava.co.in/how-to-create-a-spring-rest-application-via-maven-and-eclipse/
+Creating a Spring REST application in Maven and Eclipse
+
+https://learnjava.co.in/spring-exceptionhandler-annotation-explained/
+Spring @ExceptionHandler annotation explained
+
+https://learnjava.co.in/how-to-create-a-spring-boot-rest-service-with-xml-output/
+How to create a Spring Boot REST service with XML output
+
+https://learnjava.co.in/how-to-create-a-spring-boot-thymeleaf-web-application/
+How to create a Spring Boot Thymeleaf web application
+
+
+
+
+----------------------------------------------------------------------
+https://www.dineshonjava.com/spring-tutorial/
+
+A configuration model and a dependency injection mechanism belong to the core container located in the heart of the framework.
+Core and Beans are the basic parts of the framework with Dependency Injection and IoC features.
+The BeanFactory is a sophisticated implementation of the factory pattern.
+
+Context is another module which is built on the solid base by the Core and Beans. This module is a way to access the objects in a framework-style and is similar to a JNDI registry.
+The Context module has a focal point which is known as the ApplicationContext.
+
+The Spring Container takes the classes in the application, creates objects, and manages the life cycle of those objects.
+
+The Core package is the most fundamental part of the framework and provides the IoC and Dependency Injection features. The basic concept here is the BeanFactory, which provides a sophisticated implementation of the factory pattern
+
+
+----------------------------------------------------------------------
+JPA/Hibernate Persistence Context
+https://www.baeldung.com/jpa-hibernate-persistence-context
+
+----------------------------------------------------------------------
+JPA EntityManagerFactory Vs Hibernate’s SessionFactory
+https://javabeat.net/jpa-entitymanager-vs-hibernate-sessionfactory/
+
+If you are using the JPA’s standard specification implementation (Read : Introduction to JPA), then you would use EntityManagerFactory for opening the session. But, if you are using the hibernate implementation, you have hibernate specific SessionFactory for managing the sessions. 
+
+Here, there is two opinions are popular:
+
+    EntityManagerFactory is  the standard implementation, it is the same across all the implementations. If we migrate our ORM for any other provider, there will not be any change in the approach for handling the transaction. In contrast, if you use hibernate’s session factory, it is tied  to hibernate APIs and ca not migrate to new vendor easily.
+    One dis-advantage of using the standard implementation is that, it is not providing the advanced features. There is not much control provided in the EntityManager APIs. Whereas, hibernate’s SessionFactory has lot of advanced features which can not done in JPA. One such thing is retrieving the ID generator without closing the transaction, batch insert, etc.
+
+
+----------------------------------------------------------------------
+https://www.netsurfingzone.com/hibernate/get-session-from-entitymanager-in-spring-boot/
+Get Session From EntityManager in Spring Boot
+
+----------------------------------------------------------------------
+https://www.baeldung.com/hibernate-initialize-proxy-exception
+Hibernate could not initialize proxy – no Session
+
+It's important to understand what is Session, Lazy Initialisation, and Proxy Object and how they come together in the Hibernate framework.
+
+    Session is a persistence context that represents a conversation between an application and the database
+    Lazy Loading means that the object will not be loaded to the Session context until it is accessed in code.
+    Hibernate creates a dynamic Proxy Object subclass that will hit the database only when we first use the object.

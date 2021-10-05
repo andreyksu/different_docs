@@ -1,0 +1,31 @@
+0. Подготовиться к сборке:
+	apt-get install build-essential
+1. Установить пакеты:
+	apt-get install libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev
+	apt-get install libffi-dev
+2. Скачать бинарь Python, распаковать и собрать:
+	2.1. Перейти в распакованный каталог и выполнить 
+			./configure --prefix=/usr 
+	2.2. Выполнить команду
+			make
+	2.3. Выполнить команду
+			make install
+				Возникала ошибка связанная с lsb_release
+				Помогло указание в файле vim /usr/bin/lsb_release правильного интерпретатора. В моем случае 3.5 (т.е.  #!/usr/bin/python3.5 -Es)
+		
+3. Установка пакетов через pip
+	python3.9 -m pip install --proxy=http://a.nikonenkov:p\@ssword@proxy05.icl.kazan.ru:3128 pytest
+	
+		При  этом все спец-символы должны быть экранированы.
+			Пример: @ → \@ или $ → \$
+		
+PS.
+Может быть полезной статья:
+	https://www.andreyolegovich.ru/code/python/issues/ssl_module_is_not_available.php
+	
+python -m ensurepip
+python -m ensurepip --upgrade
+
+
+cd requests
+python -m pip install .
