@@ -324,3 +324,6 @@ What exactly does make you worry
 
 first fo all	|Прежде всего
 first at all	|сначала вообще
+
+in turn			|в свою очередь
+for the sake of the completenes	|ради полноты

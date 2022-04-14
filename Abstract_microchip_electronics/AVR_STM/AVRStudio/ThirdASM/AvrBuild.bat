@@ -1,2 +1,0 @@
-@ECHO OFF
-"C:\Program Files\Atmel\AVR Tools\AvrAssembler2\avrasm2.exe" -S "C:\utils\git\docs\MC_AVR_PIC\AVRStudio\ThirdASM\labels.tmp" -fI -W+ie -C V2E -o "C:\utils\git\docs\MC_AVR_PIC\AVRStudio\ThirdASM\ThirdASM.hex" -d "C:\utils\git\docs\MC_AVR_PIC\AVRStudio\ThirdASM\ThirdASM.obj" -e "C:\utils\git\docs\MC_AVR_PIC\AVRStudio\ThirdASM\ThirdASM.eep" -m "C:\utils\git\docs\MC_AVR_PIC\AVRStudio\ThirdASM\ThirdASM.map" "C:\utils\git\docs\MC_AVR_PIC\AVRStudio\ThirdASM\ThirdASM.asm"
